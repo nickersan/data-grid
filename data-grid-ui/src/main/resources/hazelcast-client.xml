@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans
+  xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd"
+>
+
+  <bean id="clientConfig" class="com.hazelcast.client.config.ClientConfig"/>
+
+  <bean id="hazelcastInstance" class="com.hazelcast.client.HazelcastClient" factory-method="newHazelcastClient" destroy-method="shutdown">
+    <constructor-arg ref="clientConfig"/>
+  </bean>
+
+</beans>

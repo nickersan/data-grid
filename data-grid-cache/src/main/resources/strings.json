@@ -1,0 +1,419 @@
+[
+  {
+    "identity": {
+      "type": { "name": "MODEL", "valueType": "string"},
+      "id": 1
+    },
+    "value": "Sales"
+  },
+  {
+    "identity": {
+      "type": { "name": "YEARS", "valueType": "string"},
+      "id": 2,
+      "parent": {
+        "type": { "name": "MODEL", "valueType": "string"},
+        "id": 1
+      }
+    },
+    "value": "All Years"
+  },
+  {
+    "identity": {
+      "type": { "name": "YEAR", "valueType": "string"},
+      "id": 3,
+      "parent": {
+        "type": { "name": "YEARS", "valueType": "string"},
+        "id": 2,
+        "parent": {
+          "type": { "name": "MODEL", "valueType": "string"},
+          "id": 1
+        }
+      }
+    },
+    "value": "2017"
+  },
+  {
+    "identity": {
+      "type": { "name": "MONTH", "valueType": "string"},
+      "id": 4,
+      "parent": {
+        "type": { "name": "YEAR", "valueType": "string"},
+        "id": 3,
+        "parent": {
+          "type": { "name": "YEARS", "valueType": "string"},
+          "id": 2,
+          "parent": {
+            "type": { "name": "MODEL", "valueType": "string"},
+            "id": 1
+          }
+        }
+      }
+    },
+    "value": "January"
+  },
+  {
+    "identity": {
+      "type": { "name": "MONTH", "valueType": "string"},
+      "id": 5,
+      "parent": {
+        "type": { "name": "YEAR", "valueType": "string"},
+        "id": 3,
+        "parent": {
+          "type": { "name": "YEARS", "valueType": "string"},
+          "id": 2,
+          "parent": {
+            "type": { "name": "MODEL", "valueType": "string"},
+            "id": 1
+          }
+        }
+      }
+    },
+    "value": "February"
+  },
+  {
+    "identity": {
+      "type": { "name": "MONTH", "valueType": "string"},
+      "id": 6,
+      "parent": {
+        "type": { "name": "YEAR", "valueType": "string"},
+        "id": 3,
+        "parent": {
+          "type": { "name": "YEARS", "valueType": "string"},
+          "id": 2,
+          "parent": {
+            "type": { "name": "MODEL", "valueType": "string"},
+            "id": 1
+          }
+        }
+      }
+    },
+    "value": "March"
+  },
+  {
+    "identity": {
+      "type": { "name": "MONTH", "valueType": "string"},
+      "id": 7,
+      "parent": {
+        "type": { "name": "YEAR", "valueType": "string"},
+        "id": 3,
+        "parent": {
+          "type": { "name": "YEARS", "valueType": "string"},
+          "id": 2,
+          "parent": {
+            "type": { "name": "MODEL", "valueType": "string"},
+            "id": 1
+          }
+        }
+      }
+    },
+    "value": "April"
+  },
+  {
+    "identity": {
+      "type": { "name": "MONTH", "valueType": "string"},
+      "id": 8,
+      "parent": {
+        "type": { "name": "YEAR", "valueType": "string"},
+        "id": 3,
+        "parent": {
+          "type": { "name": "YEARS", "valueType": "string"},
+          "id": 2,
+          "parent": {
+            "type": { "name": "MODEL", "valueType": "string"},
+            "id": 1
+          }
+        }
+      }
+    },
+    "value": "May"
+  },
+  {
+    "identity": {
+      "type": { "name": "MONTH", "valueType": "string"},
+      "id": 9,
+      "parent": {
+        "type": { "name": "YEAR", "valueType": "string"},
+        "id": 3,
+        "parent": {
+          "type": { "name": "YEARS", "valueType": "string"},
+          "id": 2,
+          "parent": {
+            "type": { "name": "MODEL", "valueType": "string"},
+            "id": 1
+          }
+        }
+      }
+    },
+    "value": "June"
+  },
+  {
+    "identity": {
+      "type": { "name": "MONTH", "valueType": "string"},
+      "id": 10,
+      "parent": {
+        "type": { "name": "YEAR", "valueType": "string"},
+        "id": 3,
+        "parent": {
+          "type": { "name": "YEARS", "valueType": "string"},
+          "id": 2,
+          "parent": {
+            "type": { "name": "MODEL", "valueType": "string"},
+            "id": 1
+          }
+        }
+      }
+    },
+    "value": "July"
+  },
+  {
+    "identity": {
+      "type": { "name": "MONTH", "valueType": "string"},
+      "id": 11,
+      "parent": {
+        "type": { "name": "YEAR", "valueType": "string"},
+        "id": 3,
+        "parent": {
+          "type": { "name": "YEARS", "valueType": "string"},
+          "id": 2,
+          "parent": {
+            "type": { "name": "MODEL", "valueType": "string"},
+            "id": 1
+          }
+        }
+      }
+    },
+    "value": "August"
+  },
+  {
+    "identity": {
+      "type": { "name": "MONTH", "valueType": "string"},
+      "id": 12,
+      "parent": {
+        "type": { "name": "YEAR", "valueType": "string"},
+        "id": 3,
+        "parent": {
+          "type": { "name": "YEARS", "valueType": "string"},
+          "id": 2,
+          "parent": {
+            "type": { "name": "MODEL", "valueType": "string"},
+            "id": 1
+          }
+        }
+      }
+    },
+    "value": "September"
+  },
+  {
+    "identity": {
+      "type": { "name": "MONTH", "valueType": "string"},
+      "id": 13,
+      "parent": {
+        "type": { "name": "YEAR", "valueType": "string"},
+        "id": 3,
+        "parent": {
+          "type": { "name": "YEARS", "valueType": "string"},
+          "id": 2,
+          "parent": {
+            "type": { "name": "MODEL", "valueType": "string"},
+            "id": 1
+          }
+        }
+      }
+    },
+    "value": "October"
+  },
+  {
+    "identity": {
+      "type": { "name": "MONTH", "valueType": "string"},
+      "id": 14,
+      "parent": {
+        "type": { "name": "YEAR", "valueType": "string"},
+        "id": 3,
+        "parent": {
+          "type": { "name": "YEARS", "valueType": "string"},
+          "id": 2,
+          "parent": {
+            "type": { "name": "MODEL", "valueType": "string"},
+            "id": 1
+          }
+        }
+      }
+    },
+    "value": "November"
+  },
+  {
+    "identity": {
+      "type": { "name": "MONTH", "valueType": "string"},
+      "id": 15,
+      "parent": {
+        "type": { "name": "YEAR", "valueType": "string"},
+        "id": 3,
+        "parent": {
+          "type": { "name": "YEARS", "valueType": "string"},
+          "id": 2,
+          "parent": {
+            "type": { "name": "MODEL", "valueType": "string"},
+            "id": 1
+          }
+        }
+      }
+    },
+    "value": "December"
+  },
+  {
+    "identity": {
+      "type": { "name": "REGIONS", "valueType": "string"},
+      "id": 16,
+      "parent": {
+        "type": { "name": "MODEL", "valueType": "string"},
+        "id": 1
+      }
+    },
+    "value": "Regions"
+  },
+  {
+    "identity": {
+      "type": { "name": "REGION", "valueType": "string"},
+      "id": 17,
+      "parent": {
+        "type": { "name": "REGIONS", "valueType": "string"},
+        "id": 16,
+        "parent": {
+          "type": { "name": "MODEL", "valueType": "string"},
+          "id": 1
+        }
+      }
+    },
+    "value": "EMEA"
+  },
+  {
+    "identity": {
+      "type": { "name": "REGION", "valueType": "string"},
+      "id": 18,
+      "parent": {
+        "type": { "name": "REGIONS", "valueType": "string"},
+        "id": 16,
+        "parent": {
+          "type": { "name": "MODEL", "valueType": "string"},
+          "id": 1
+        }
+      }
+    },
+    "value": "NA"
+  },
+  {
+    "identity": {
+      "type": { "name": "PERSON", "valueType": "string"},
+      "id": 19,
+      "parent": {
+        "type": { "name": "REGION", "valueType": "string"},
+        "id": 17,
+        "parent": {
+          "type": { "name": "REGIONS", "valueType": "string"},
+          "id": 16,
+          "parent": {
+            "type": { "name": "MODEL", "valueType": "string"},
+            "id": 1
+          }
+        }
+      }
+    },
+    "value": "Nigel"
+  },
+  {
+    "identity": {
+      "type": { "name": "PERSON", "valueType": "string"},
+      "id": 20,
+      "parent": {
+        "type": { "name": "REGION", "valueType": "string"},
+        "id": 17,
+        "parent": {
+          "type": { "name": "REGIONS", "valueType": "string"},
+          "id": 16,
+          "parent": {
+            "type": { "name": "MODEL", "valueType": "string"},
+            "id": 1
+          }
+        }
+      }
+    },
+    "value": "David"
+  },
+  {
+    "identity": {
+      "type": { "name": "PERSON", "valueType": "string"},
+      "id": 21,
+      "parent": {
+        "type": { "name": "REGION", "valueType": "string"},
+        "id": 17,
+        "parent": {
+          "type": { "name": "REGIONS", "valueType": "string"},
+          "id": 16,
+          "parent": {
+            "type": { "name": "MODEL", "valueType": "string"},
+            "id": 1
+          }
+        }
+      }
+    },
+    "value": "Brian"
+  },
+  {
+    "identity": {
+      "type": { "name": "PERSON", "valueType": "string"},
+      "id": 22,
+      "parent": {
+        "type": { "name": "REGION", "valueType": "string"},
+        "id": 18,
+        "parent": {
+          "type": { "name": "REGIONS", "valueType": "string"},
+          "id": 16,
+          "parent": {
+            "type": { "name": "MODEL", "valueType": "string"},
+            "id": 1
+          }
+        }
+      }
+    },
+    "value": "Chuck"
+  },
+  {
+    "identity": {
+      "type": { "name": "PERSON", "valueType": "string"},
+      "id": 23,
+      "parent": {
+        "type": { "name": "REGION", "valueType": "string"},
+        "id": 18,
+        "parent": {
+          "type": { "name": "REGIONS", "valueType": "string"},
+          "id": 16,
+          "parent": {
+            "type": { "name": "MODEL", "valueType": "string"},
+            "id": 1
+          }
+        }
+      }
+    },
+    "value": "Joe"
+  },
+  {
+    "identity": {
+      "type": { "name": "PERSON", "valueType": "string"},
+      "id": 24,
+      "parent": {
+        "type": { "name": "REGION", "valueType": "string"},
+        "id": 18,
+        "parent": {
+          "type": { "name": "REGIONS", "valueType": "string"},
+          "id": 16,
+          "parent": {
+            "type": { "name": "MODEL", "valueType": "string"},
+            "id": 1
+          }
+        }
+      }
+    },
+    "value": "Buck"
+  }
+]
+
