@@ -10,7 +10,8 @@
   <import resource="classpath:cache-access-objects.xml"/>
 
   <bean class="com.tn.datagrid.ui.frames.Main">
-    <constructor-arg ref="stringValueCacheAccessObject"/>
+    <constructor-arg ref="typeCao"/>
+    <constructor-arg ref="stringValueCao"/>
   </bean>
 
 </beans>

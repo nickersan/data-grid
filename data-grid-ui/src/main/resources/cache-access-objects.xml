@@ -6,12 +6,12 @@
   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd"
 >
 
-  <bean id="stringValueCacheAccessObject" class="com.tn.datagrid.cao.StringValueCaoImpl">
-    <constructor-arg>
-      <bean factory-bean="hazelcastInstance" factory-method="getMap">
-        <constructor-arg value="strings"/>
-      </bean>
-    </constructor-arg>
+  <bean id="stringValueCao" class="com.tn.datagrid.cao.StringValueCaoImpl">
+    <constructor-arg ref="hazelcastInstance"/>
+  </bean>
+
+  <bean id="typeCao" class="com.tn.datagrid.cao.TypeCaoImpl">
+    <constructor-arg ref="hazelcastInstance"/>
   </bean>
 
 </beans>

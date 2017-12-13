@@ -45,7 +45,7 @@ public class Type<T, V extends Value<T, V>> implements Serializable
 
   public String toString()
   {
-    return new ToStringBuilder(ToStringStyle.SHORT_PREFIX_STYLE)
+    return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
       .append("valueType", getValueType())
       .append("name", getName())
       .toString();

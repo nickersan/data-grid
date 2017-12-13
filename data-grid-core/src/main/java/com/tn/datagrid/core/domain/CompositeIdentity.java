@@ -43,7 +43,7 @@ public class CompositeIdentity<T, V extends Value<T, V>> extends NumericIdentity
   @Override
   public String toString()
   {
-    return new ToStringBuilder(ToStringStyle.SHORT_PREFIX_STYLE)
+    return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
       .append("id", this.get())
       .append("referencingIdentities", this.referencingIdentities)
       .toString();

@@ -41,7 +41,7 @@ public abstract class ObjectValue<T, V extends Value<T, V>> extends Value<T, V>
   @Override
   public String toString()
   {
-    return new ToStringBuilder(ToStringStyle.SHORT_PREFIX_STYLE)
+    return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
       .append("identity", getIdentity())
       .append("value", get())
       .toString();

@@ -1,15 +1,28 @@
 package com.tn.datagrid.ui.frames;
 
-import java.awt.*;
-import javax.swing.*;
+import static com.tn.datagrid.core.predicate.Predicates.*;
+import static com.tn.datagrid.core.predicate.Predicates.Types.*;
+import static com.tn.datagrid.core.predicate.Predicates.Values.*;
 
+import java.awt.BorderLayout;
+import java.util.Collection;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.WindowConstants;
+
+import com.tn.datagrid.cao.CaoException;
 import com.tn.datagrid.cao.StringValueCao;
+import com.tn.datagrid.cao.TypeCao;
 import com.tn.datagrid.core.domain.NumericIdentity;
 import com.tn.datagrid.core.domain.StringValue;
+import com.tn.datagrid.core.domain.Type;
 
 public class Main extends JFrame
 {
   private static final String TITLE = "Data Grid - POC";
+  private static final String TYPE_REGIONS = "REGIONS";
 
   private JPanel contentPanel;
   private JScrollPane dataScrollPane;
@@ -18,8 +31,27 @@ public class Main extends JFrame
   private JPanel peoplePanel;
   private JPanel periodsPanel;
 
-  public Main(StringValueCao stringValueCao) throws HeadlessException
+  public Main(TypeCao typeCao, StringValueCao stringValueCao)
   {
+    try
+    {
+      com.tn.datagrid.core.domain.Type<?, ?> regionsType = typeCao.get(named(TYPE_REGIONS)).stream()
+        .findFirst()
+        .orElseThrow(RuntimeException::new);
+
+      StringValue regions = stringValueCao.get(isA(regionsType)).stream()
+        .findFirst()
+        .orElseThrow(RuntimeException::new);
+
+      Collection<StringValue> region = stringValueCao.get(childrenOf(regions, true));
+      System.out.println(region);
+    }
+    catch (CaoException e)
+    {
+      e.printStackTrace();
+    }
+
+
     setTitle(TITLE);
     setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
     createUI();

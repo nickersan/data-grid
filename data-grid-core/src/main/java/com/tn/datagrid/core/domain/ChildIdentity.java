@@ -7,10 +7,34 @@ public class ChildIdentity<T, V extends Value<T, V>> extends NumericIdentity<T, 
 {
   private Identity<?, ?> parentIdentity;
 
+  public ChildIdentity(Type<T, V> type, int id, Value<?, ?> parent)
+  {
+    this(type, id, parent.getIdentity());
+  }
+
   public ChildIdentity(Type<T, V> type, int id, Identity<?, ?> parentIdentity)
   {
     super(type, id);
     this.parentIdentity = parentIdentity;
+  }
+
+  public Identity<?, ?> getParentIdentity()
+  {
+    return parentIdentity;
+  }
+
+  public boolean isChildOf(Value<?, ?> value, boolean recursive)
+  {
+    return isChildOf(value.getIdentity(), recursive);
+  }
+
+  public boolean isChildOf(Identity<?, ?> identity, boolean recursive)
+  {
+    return parentIdentity.equals(identity) || (
+      recursive &&
+      parentIdentity instanceof ChildIdentity &&
+      ((ChildIdentity<?, ?>)parentIdentity).isChildOf(identity, true)
+    );
   }
 
   @Override
@@ -33,7 +57,7 @@ public class ChildIdentity<T, V extends Value<T, V>> extends NumericIdentity<T, 
   @Override
   public String toString()
   {
-    return new ToStringBuilder(ToStringStyle.SHORT_PREFIX_STYLE)
+    return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
       .append("id", this.get())
       .append("parentIdentity", this.parentIdentity)
       .toString();
