@@ -57,6 +57,34 @@ public class TreeValue<T, V extends Value<T, V>, T1, V1 extends Value<T1, V1>> e
       .sum() + children.size() + 1;
   }
 
+  public int depthOf(Value<?, ?> value)
+  {
+    if (this.root.equals(value))
+    {
+      return 0;
+    }
+    else
+    {
+      for (Value<?, ?> child : this.children)
+      {
+        if (child.equals(value))
+        {
+          return 1;
+        }
+        else if (child instanceof TreeValue)
+        {
+          int index = ((TreeValue<?, ?, ?, ?>)child).depthOf(value);
+          if (index > -1)
+          {
+            return 1 + index;
+          }
+        }
+      }
+
+      return -1;
+    }
+  }
+
   @Override
   public boolean equals(Object other)
   {

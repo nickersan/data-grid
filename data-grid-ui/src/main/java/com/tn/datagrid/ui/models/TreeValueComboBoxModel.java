@@ -3,6 +3,8 @@ package com.tn.datagrid.ui.models;
 import javax.swing.*;
 import javax.swing.event.ListDataListener;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.tn.datagrid.core.domain.StringValue;
 import com.tn.datagrid.core.domain.TreeValue;
 import com.tn.datagrid.core.domain.Type;
@@ -24,7 +26,10 @@ public class TreeValueComboBoxModel implements ComboBoxModel<String>
   @Override
   public String getElementAt(int index)
   {
-    return this.treeValue.getAt(index).get().toString();
+    StringValue value = this.treeValue.getAt(index);
+    int depth = this.treeValue.depthOf(value);
+
+    return StringUtils.leftPad(value.get(), value.get().length() + (depth * 2));
   }
 
   @Override
