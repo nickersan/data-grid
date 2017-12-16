@@ -1,69 +1,63 @@
 package com.tn.datagrid.ui.frames;
 
 import static com.tn.datagrid.core.predicate.Predicates.*;
-import static com.tn.datagrid.core.predicate.Predicates.Types.*;
 import static com.tn.datagrid.core.predicate.Predicates.Values.*;
+import static com.tn.datagrid.ui.Types.*;
 
 import java.awt.BorderLayout;
 import java.util.Collection;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.WindowConstants;
+import javax.swing.*;
 
 import com.tn.datagrid.cao.CaoException;
 import com.tn.datagrid.cao.StringValueCao;
-import com.tn.datagrid.cao.TypeCao;
 import com.tn.datagrid.core.domain.NumericIdentity;
 import com.tn.datagrid.core.domain.StringValue;
-import com.tn.datagrid.core.domain.Type;
+import com.tn.datagrid.core.domain.TreeValue;
+import com.tn.datagrid.ui.models.TreeValueComboBoxModel;
 
 public class Main extends JFrame
 {
   private static final String TITLE = "Data Grid - POC";
-  private static final String TYPE_REGIONS = "REGIONS";
 
   private JPanel contentPanel;
   private JScrollPane dataScrollPane;
   private JPanel headerPanel;
   private JPanel versionsPanel;
+  private JComboBox<String> peopleCombo;
   private JPanel peoplePanel;
   private JPanel periodsPanel;
 
-  public Main(TypeCao typeCao, StringValueCao stringValueCao)
+  public Main(StringValueCao stringValueCao) throws CaoException
   {
-    try
-    {
-      com.tn.datagrid.core.domain.Type<?, ?> regionsType = typeCao.get(named(TYPE_REGIONS)).stream()
-        .findFirst()
-        .orElseThrow(RuntimeException::new);
-
-      StringValue regions = stringValueCao.get(isA(regionsType)).stream()
-        .findFirst()
-        .orElseThrow(RuntimeException::new);
-
-      Collection<StringValue> region = stringValueCao.get(childrenOf(regions, true));
-      System.out.println(region);
-    }
-    catch (CaoException e)
-    {
-      e.printStackTrace();
-    }
-
-
     setTitle(TITLE);
     setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-    createUI();
+    createUI(getRegions(stringValueCao));
     loadData(stringValueCao);
   }
 
-  private void loadData(StringValueCao stringValueCao)
+  private TreeValue<String, StringValue, String, TreeValue<String, StringValue, String, StringValue>> getRegions(
+    StringValueCao stringValueCao
+  )
+    throws CaoException
+  {
+    Collection<StringValue> values = stringValueCao.get(or(isA(TYPE_REGIONS), isA(TYPE_REGION), isA(TYPE_PERSON)));
+
+    StringValue regions = values.stream()
+      .filter((value) -> TYPE_REGIONS.equals(value.getType()))
+      .findFirst()
+      .orElseThrow(() -> new IllegalStateException("No regions value found"));
+
+    return TreeValue.builder(TYPE_REGION)
+      .withChildren(TreeValue.builder(TYPE_PERSON))
+      .build(regions, values);
+  }
+
+  private void loadData(StringValueCao stringValueCao) throws CaoException
   {
     stringValueCao.get(new NumericIdentity<>(StringValue.newType("model").build(), 1));
   }
 
-  private void createUI()
+  private void createUI(TreeValue<String, StringValue, String, TreeValue<String, StringValue, String, StringValue>> regions)
   {
     setLayout(new BorderLayout());
 
@@ -78,8 +72,11 @@ public class Main extends JFrame
     this.contentPanel.add(new JLabel("content"));
     add(this.contentPanel, BorderLayout.CENTER);
 
+    this.peopleCombo = new JComboBox<>(new TreeValueComboBoxModel(regions));
+    //this.peopleCombo.setRenderer(new TreeValueListCellRenderer());
+
     this.peoplePanel = new JPanel();
-    this.peoplePanel.add(new JLabel("people"));
+    this.peoplePanel.add(this.peopleCombo);
     this.contentPanel.add(this.peoplePanel, BorderLayout.WEST);
 
     this.periodsPanel = new JPanel();

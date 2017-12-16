@@ -2,6 +2,7 @@ package com.tn.datagrid.core.domain;
 
 import static java.util.Arrays.*;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -36,9 +37,24 @@ public class TreeValue<T, V extends Value<T, V>, T1, V1 extends Value<T1, V1>> e
     return this.root.get();
   }
 
+  public <T2, V2 extends Value<T2, V2>> V2 getAt(int index) throws IndexOutOfBoundsException
+  {
+    //noinspection unchecked
+    return (V2)flatten().get(index);
+  }
+
   public Collection<V1> getChildren()
   {
     return this.children;
+  }
+
+  public int size()
+  {
+    return children.stream()
+      .filter(TreeValue.class::isInstance)
+      .map(TreeValue.class::cast)
+      .mapToInt((treeValue) -> treeValue.size() - 1)
+      .sum() + children.size() + 1;
   }
 
   @Override
@@ -74,6 +90,26 @@ public class TreeValue<T, V extends Value<T, V>, T1, V1 extends Value<T1, V1>> e
     return new Builder<>(childType);
   }
 
+  private List<? extends Value<?, ?>> flatten()
+  {
+    List<Value<?, ?>> flattened = new ArrayList<>();
+    flattened.add(this.root);
+
+    for (V1 child : this.children)
+    {
+      if (child instanceof TreeValue)
+      {
+        flattened.addAll(((TreeValue<?, ?, ?, ?>)child).flatten());
+      }
+      else
+      {
+        flattened.add(child);
+      }
+    }
+
+    return flattened;
+  }
+
   public static class Builder<T1, V1 extends Value<T1, V1>>
   {
     private Type<T1, V1> childType;
@@ -89,7 +125,7 @@ public class TreeValue<T, V extends Value<T, V>, T1, V1 extends Value<T1, V1>> e
       return this.build(root, asList(children));
     }
 
-    public <T, V extends Value<T, V>> TreeValue<T, V, T1, V1> build(V root, Collection<Value<?, ?>> children)
+    public <T, V extends Value<T, V>> TreeValue<T, V, T1, V1> build(V root, Collection<? extends Value<?, ?>> children)
     {
       //noinspection unchecked
       List<V1> childValues = children.stream()

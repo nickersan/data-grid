@@ -9,7 +9,7 @@ import com.tn.datagrid.core.domain.Value;
 
 public interface ValueCao<T, V extends Value<T, V>>
 {
-  public Optional<V> get(Identity<?, V> identity);
+  public Optional<V> get(Identity<?, V> identity) throws CaoException;
 
-  public Collection<V> get(Predicate<V> predicate);
+  public Collection<V> get(Predicate<V> predicate) throws CaoException;
 }
