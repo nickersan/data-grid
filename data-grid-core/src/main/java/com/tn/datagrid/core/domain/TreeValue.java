@@ -5,6 +5,7 @@ import static java.util.Arrays.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -142,6 +143,7 @@ public class TreeValue<T, V extends Value<T, V>, T1, V1 extends Value<T1, V1>> e
   {
     private Type<T1, V1> childType;
     private Builder<?, ? extends Value> childBuilder;
+    private Comparator<V1> comparator;
 
     private Builder(Type<T1, V1> childType)
     {
@@ -161,14 +163,18 @@ public class TreeValue<T, V extends Value<T, V>, T1, V1 extends Value<T1, V1>> e
         .map((value) -> this.childBuilder != null ? (V1)childBuilder.build((V1)value, children) : (V1)value)
         .collect(Collectors.toList());
 
+      if (this.comparator != null)
+      {
+        childValues.sort(this.comparator);
+      }
+
       return new TreeValue<>(root, childValues);
     }
 
-    private Predicate<Value<?, ?>> isChild(Value<?, ?> root)
+    public Builder<T1, V1> sorted(Comparator<V1> comparator)
     {
-      return (value) -> childType.equals(value.getType()) &&
-        value.getIdentity() instanceof ChildIdentity &&
-        ((ChildIdentity)value.getIdentity()).getParentIdentity().equals(root.getIdentity());
+      this.comparator = comparator;
+      return this;
     }
 
     public <T2, V2 extends Value<T2, V2>> Builder<T1, TreeValue<T1, V1, T2, V2>> withChildren(Builder<T2, V2> childBuilder)
@@ -176,6 +182,13 @@ public class TreeValue<T, V extends Value<T, V>, T1, V1 extends Value<T1, V1>> e
       this.childBuilder = childBuilder;
       //noinspection unchecked
       return (Builder<T1, TreeValue<T1, V1, T2, V2>>)this;
+    }
+
+    private Predicate<Value<?, ?>> isChild(Value<?, ?> root)
+    {
+      return (value) -> childType.equals(value.getType()) &&
+        value.getIdentity() instanceof ChildIdentity &&
+        ((ChildIdentity)value.getIdentity()).getParentIdentity().equals(root.getIdentity());
     }
   }
 }

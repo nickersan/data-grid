@@ -10,9 +10,11 @@ import javax.swing.*;
 
 import com.tn.datagrid.cao.CaoException;
 import com.tn.datagrid.cao.StringValueCao;
+import com.tn.datagrid.core.domain.Identity;
 import com.tn.datagrid.core.domain.NumericIdentity;
 import com.tn.datagrid.core.domain.StringValue;
 import com.tn.datagrid.core.domain.TreeValue;
+import com.tn.datagrid.core.domain.Value;
 import com.tn.datagrid.ui.models.TreeValueComboBoxModel;
 
 public class Main extends JFrame
@@ -26,13 +28,31 @@ public class Main extends JFrame
   private JComboBox<String> peopleCombo;
   private JPanel peoplePanel;
   private JPanel periodsPanel;
+  private JComboBox<String> periodsCombo;
 
   public Main(StringValueCao stringValueCao) throws CaoException
   {
     setTitle(TITLE);
     setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-    createUI(getRegions(stringValueCao));
+    createUI(getRegions(stringValueCao), getPeriods(stringValueCao));
     loadData(stringValueCao);
+  }
+
+  private TreeValue<String, StringValue, String, TreeValue<String, StringValue, String, StringValue>> getPeriods(
+    StringValueCao stringValueCao
+  )
+    throws CaoException
+  {
+    Collection<StringValue> values = stringValueCao.get(or(isA(TYPE_YEARS), isA(TYPE_YEAR), isA(TYPE_MONTH)));
+
+    StringValue years = values.stream()
+      .filter((value) -> TYPE_YEARS.equals(value.getType()))
+      .findFirst()
+      .orElseThrow(() -> new IllegalStateException("No years value found"));
+
+    return TreeValue.builder(TYPE_YEAR)
+      .withChildren(TreeValue.builder(TYPE_MONTH).sorted(Value.compareBy((value) -> ((NumericIdentity)value.getIdentity()).get())))
+      .build(years, values);
   }
 
   private TreeValue<String, StringValue, String, TreeValue<String, StringValue, String, StringValue>> getRegions(
@@ -57,7 +77,10 @@ public class Main extends JFrame
     stringValueCao.get(new NumericIdentity<>(StringValue.newType("model").build(), 1));
   }
 
-  private void createUI(TreeValue<String, StringValue, String, TreeValue<String, StringValue, String, StringValue>> regions)
+  private void createUI(
+    TreeValue<String, StringValue, String, TreeValue<String, StringValue, String, StringValue>> regions,
+    TreeValue<String, StringValue, String, TreeValue<String, StringValue, String, StringValue>> periods
+  )
   {
     setLayout(new BorderLayout());
 
@@ -73,14 +96,15 @@ public class Main extends JFrame
     add(this.contentPanel, BorderLayout.CENTER);
 
     this.peopleCombo = new JComboBox<>(new TreeValueComboBoxModel(regions));
-    //this.peopleCombo.setRenderer(new TreeValueListCellRenderer());
 
     this.peoplePanel = new JPanel();
     this.peoplePanel.add(this.peopleCombo);
     this.contentPanel.add(this.peoplePanel, BorderLayout.WEST);
 
+    this.periodsCombo = new JComboBox<>(new TreeValueComboBoxModel(periods));
+
     this.periodsPanel = new JPanel();
-    this.periodsPanel.add(new JLabel("periods"));
+    this.periodsPanel.add(this.periodsCombo);
     this.contentPanel.add(this.periodsPanel, BorderLayout.NORTH);
 
     this.dataScrollPane = new JScrollPane();

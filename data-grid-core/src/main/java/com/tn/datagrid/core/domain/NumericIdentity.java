@@ -1,5 +1,7 @@
 package com.tn.datagrid.core.domain;
 
+import java.util.Comparator;
+
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 
