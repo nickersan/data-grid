@@ -1,7 +1,6 @@
 package com.tn.datagrid.core.domain;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
-import org.apache.commons.lang.builder.ToStringStyle;
+import static com.google.common.base.MoreObjects.toStringHelper;
 
 public class ChildIdentity<T, V extends Value<T, V>> extends NumericIdentity<T, V>
 {
@@ -57,9 +56,9 @@ public class ChildIdentity<T, V extends Value<T, V>> extends NumericIdentity<T, 
   @Override
   public String toString()
   {
-    return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
-      .append("id", this.get())
-      .append("parentIdentity", this.parentIdentity)
+    return toStringHelper(this)
+      .add("id", this.get())
+      .add("parentIdentity", this.parentIdentity)
       .toString();
   }
 }

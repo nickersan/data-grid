@@ -2,6 +2,8 @@ package com.tn.datagrid.core.domain;
 
 import static java.util.Arrays.*;
 
+import static com.google.common.base.MoreObjects.toStringHelper;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -9,9 +11,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-
-import org.apache.commons.lang.builder.ToStringBuilder;
-import org.apache.commons.lang.builder.ToStringStyle;
 
 public class TreeValue<T, V extends Value<T, V>, T1, V1 extends Value<T1, V1>> extends Value<T, TreeValue<T, V, T1, V1>>
 {
@@ -107,10 +106,10 @@ public class TreeValue<T, V extends Value<T, V>, T1, V1 extends Value<T1, V1>> e
   @Override
   public String toString()
   {
-    return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
-      .append("identity", getIdentity())
-      .append("value", get())
-      .append("children", getChildren())
+    return toStringHelper(this)
+      .add("identity", getIdentity())
+      .add("value", get())
+      .add("children", getChildren())
       .toString();
   }
 

@@ -1,11 +1,10 @@
 package com.tn.datagrid.core.domain;
 
-import static java.util.Objects.*;
+import static java.util.Objects.hash;
+
+import static com.google.common.base.MoreObjects.toStringHelper;
 
 import java.io.Serializable;
-
-import org.apache.commons.lang.builder.ToStringBuilder;
-import org.apache.commons.lang.builder.ToStringStyle;
 
 public class Type<T, V extends Value<T, V>> implements Serializable
 {
@@ -45,9 +44,9 @@ public class Type<T, V extends Value<T, V>> implements Serializable
 
   public String toString()
   {
-    return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
-      .append("valueType", getValueType())
-      .append("name", getName())
+    return toStringHelper(this)
+      .add("valueType", getValueType())
+      .add("name", getName())
       .toString();
   }
 }

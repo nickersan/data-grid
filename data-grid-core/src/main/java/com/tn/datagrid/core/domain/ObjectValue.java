@@ -2,8 +2,7 @@ package com.tn.datagrid.core.domain;
 
 import static java.util.Objects.hash;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
-import org.apache.commons.lang.builder.ToStringStyle;
+import static com.google.common.base.MoreObjects.toStringHelper;
 
 public abstract class ObjectValue<T, V extends Value<T, V>> extends Value<T, V>
 {
@@ -41,9 +40,9 @@ public abstract class ObjectValue<T, V extends Value<T, V>> extends Value<T, V>
   @Override
   public String toString()
   {
-    return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
-      .append("identity", getIdentity())
-      .append("value", get())
+    return toStringHelper(this)
+      .add("identity", getIdentity())
+      .add("value", get())
       .toString();
   }
 }

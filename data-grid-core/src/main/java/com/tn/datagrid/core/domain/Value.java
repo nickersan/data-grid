@@ -30,9 +30,10 @@ public abstract class Value<T, V extends Value<T, V>> implements Serializable
     return getIdentity().getType();
   }
 
-  public static <T, V extends Value<T, V>> Collector<V , ?, Map<Identity<T, V> ,V>> byIdentity()
+  public static <T, I extends Identity<T, V>, V extends Value<T, V>> Collector<V , ?, Map<I, V>> byIdentity()
   {
-    return Collectors.toMap(Value::getIdentity, identity());
+    //noinspection unchecked
+    return Collectors.toMap((value) -> (I)value.getIdentity(), identity());
   }
 
   public abstract boolean equals(Object other);

@@ -1,9 +1,6 @@
 package com.tn.datagrid.core.domain;
 
-import java.util.Comparator;
-
-import org.apache.commons.lang.builder.ToStringBuilder;
-import org.apache.commons.lang.builder.ToStringStyle;
+import static com.google.common.base.MoreObjects.toStringHelper;
 
 public class NumericIdentity<T, V extends Value<T, V>> extends Identity<T, V>
 {
@@ -39,8 +36,8 @@ public class NumericIdentity<T, V extends Value<T, V>> extends Identity<T, V>
   @Override
   public String toString()
   {
-    return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
-      .append("id", this.id)
+    return toStringHelper(this)
+      .add("id", this.id)
       .toString();
   }
 }

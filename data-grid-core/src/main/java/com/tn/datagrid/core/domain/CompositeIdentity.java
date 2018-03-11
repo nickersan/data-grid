@@ -1,12 +1,11 @@
 package com.tn.datagrid.core.domain;
 
-import static java.util.Arrays.*;
+import static java.util.Arrays.asList;
+
+import static com.google.common.base.MoreObjects.toStringHelper;
 
 import java.util.Collection;
 import java.util.HashSet;
-
-import org.apache.commons.lang.builder.ToStringBuilder;
-import org.apache.commons.lang.builder.ToStringStyle;
 
 public class CompositeIdentity<T, V extends Value<T, V>> extends NumericIdentity<T, V>
 {
@@ -43,9 +42,9 @@ public class CompositeIdentity<T, V extends Value<T, V>> extends NumericIdentity
   @Override
   public String toString()
   {
-    return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
-      .append("id", this.get())
-      .append("referencingIdentities", this.referencingIdentities)
+    return toStringHelper(this)
+      .add("id", this.get())
+      .add("referencingIdentities", this.referencingIdentities)
       .toString();
   }
 
