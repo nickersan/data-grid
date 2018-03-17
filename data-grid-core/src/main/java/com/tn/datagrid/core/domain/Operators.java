@@ -13,7 +13,7 @@ public class Operators
       @Override
       public IntValue apply(CalculatedIdentity<Integer, IntValue, Integer, IntValue> resultIdentity, IntValue left, IntValue right)
       {
-        return new IntValue(resultIdentity, left.get() * right.get());
+        return new IntValue(resultIdentity, left.getPrimitive() * right.getPrimitive());
       }
     };
   }

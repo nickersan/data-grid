@@ -4,7 +4,7 @@ import static java.util.Objects.hash;
 
 import static com.google.common.base.MoreObjects.toStringHelper;
 
-public class IntValue extends Value<Integer, IntValue>
+public class IntValue extends NumberValue<Integer, IntValue>
 {
   private int value;
 
@@ -39,7 +39,7 @@ public class IntValue extends Value<Integer, IntValue>
   @Override
   public int hashCode()
   {
-    return hash(getIdentity(), getPrimitive());
+    return hash(getIdentity());
   }
 
   @Override
