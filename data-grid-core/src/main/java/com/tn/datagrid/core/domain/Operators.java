@@ -2,23 +2,31 @@ package com.tn.datagrid.core.domain;
 
 import static com.google.common.base.MoreObjects.toStringHelper;
 
+import static com.tn.datagrid.core.util.NumberUtils.multiple;
+
 import java.io.Serializable;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Operators
 {
-  public static Operator<Integer, IntValue, Integer, IntValue> multiply()
+  private static Logger logger = LoggerFactory.getLogger(Operators.class);
+
+  public static Operator<Number, NumberValue, Number, NumberValue, Number, NumberValue> multiply()
   {
-    return new AbstractOperator<Integer, IntValue, Integer, IntValue>("*", Integer.class)
+    return new AbstractOperator<Number, NumberValue, Number, NumberValue, Number, NumberValue>("*", Number.class)
     {
       @Override
-      public IntValue apply(CalculatedIdentity<Integer, IntValue, Integer, IntValue> resultIdentity, IntValue left, IntValue right)
+      public NumberValue apply(CalculatedIdentity<Number, NumberValue, Number, NumberValue, Number, NumberValue> resultIdentity, NumberValue left, NumberValue right)
       {
-        return new IntValue(resultIdentity, left.getPrimitive() * right.getPrimitive());
+        logger.debug("Multiply - left: {}, right: {}", left, right);
+        return new NumberValue(resultIdentity, multiple(left.get(), right.get()));
       }
     };
   }
 
-  private abstract static class AbstractOperator<T, V extends Value<T, V>, RT, RV extends Value<RT, RV>> implements Operator<T, V, RT, RV>, Serializable
+  private abstract static class AbstractOperator<T, V extends Value<T, V>, LT, LV extends Value<LT, LV>, RT, RV extends Value<RT, RV>> implements Operator<T, V, LT, LV, RT, RV>, Serializable
   {
     private String symbol;
     private Class<T> returnType;

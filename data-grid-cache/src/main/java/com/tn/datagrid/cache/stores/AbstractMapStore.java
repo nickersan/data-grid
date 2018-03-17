@@ -8,7 +8,7 @@ import com.hazelcast.core.MapLoader;
 
 import com.tn.datagrid.core.domain.ChildIdentity;
 import com.tn.datagrid.core.domain.Identity;
-import com.tn.datagrid.core.domain.IntValue;
+import com.tn.datagrid.core.domain.NumberValue;
 import com.tn.datagrid.core.domain.NumericIdentity;
 import com.tn.datagrid.core.domain.StringValue;
 import com.tn.datagrid.core.domain.Type;
@@ -27,7 +27,7 @@ public abstract class AbstractMapStore<T, V extends Value<T, V>> implements MapL
   private static final Map<String, Class<? extends Value<?, ?>>> VALUE_TYPES = new HashMap<>();
   static
   {
-    VALUE_TYPES.put("int", IntValue.class);
+    VALUE_TYPES.put("int", NumberValue.class);
     VALUE_TYPES.put("string", StringValue.class);
   }
 
