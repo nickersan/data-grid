@@ -2,25 +2,19 @@ package com.tn.datagrid.core.domain;
 
 import static com.google.common.base.MoreObjects.toStringHelper;
 
-import com.hazelcast.core.PartitionAware;
-
 public class NumericIdentity<T, V extends Value<T, V>> extends Identity<T, V> //implements PartitionAware<Integer>
 {
   private int id;
-  private int partitionKey;
+
+  //Doesn't make sense but without this the cache loading for complex calculations dead-locks.
+  @SuppressWarnings({"FieldCanBeLocal", "unused"})
+  private int spurious;
 
   public NumericIdentity(Type<T, V> type, int id)
   {
     super(type);
     this.id = id;
-    this.partitionKey = 1;
-  }
-
-  public NumericIdentity(Type<T, V> type, int id, int partitionKey)
-  {
-    super(type);
-    this.id = id;
-    this.partitionKey = partitionKey;
+    this.spurious = 1;
   }
 
   public int get()
@@ -31,7 +25,7 @@ public class NumericIdentity<T, V extends Value<T, V>> extends Identity<T, V> //
 //  @Override
 //  public Integer getPartitionKey()
 //  {
-//    return this.partitionKey;
+//    return this.spurious;
 //  }
 
   @Override
@@ -55,6 +49,7 @@ public class NumericIdentity<T, V extends Value<T, V>> extends Identity<T, V> //
   public String toString()
   {
     return toStringHelper(this)
+      .add("type", this.getType())
       .add("id", this.id)
       .toString();
   }

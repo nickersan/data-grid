@@ -18,9 +18,9 @@ import com.tn.datagrid.core.domain.Type;
 public class HierarchicalMultiplicationCalculationHistogram extends CalculationHistogram
 {
   private static final Type<Number, NumberValue> NUMBER_TYPE = new Type<>(NumberValue.class, "number");
-  private static final NumberValue A = new NumberValue(new NumericIdentity<>(NUMBER_TYPE, 1, 1), 5);
-  private static final NumberValue B = new NumberValue(new NumericIdentity<>(NUMBER_TYPE, 2, 1), 7);
-  private static final NumberValue C = new NumberValue(new NumericIdentity<>(NUMBER_TYPE, 3, 1), 3);
+  private static final NumberValue A = new NumberValue(new NumericIdentity<>(NUMBER_TYPE, 1), 5);
+  private static final NumberValue B = new NumberValue(new NumericIdentity<>(NUMBER_TYPE, 2), 7);
+  private static final NumberValue C = new NumberValue(new NumericIdentity<>(NUMBER_TYPE, 3), 3);
   private static final Identity<Number, NumberValue> CALCULATED_IDENTITY_2 = new CalculatedIdentity<>(NUMBER_TYPE, Operators.multiply(), B.getIdentity(), C.getIdentity());
   private static final Identity<Number, NumberValue> CALCULATED_IDENTITY_1 = new CalculatedIdentity<>(NUMBER_TYPE, Operators.multiply(), A.getIdentity(), CALCULATED_IDENTITY_2);
 
