@@ -8,6 +8,8 @@ import static com.tn.datagrid.core.util.NumberUtils.multiply;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
 
+import com.tn.datagrid.cao.ValueGetter;
+import com.tn.datagrid.cao.CalculatedValueGetter;
 import com.tn.datagrid.core.domain.CalculatedIdentity;
 import com.tn.datagrid.core.domain.Identity;
 import com.tn.datagrid.core.domain.NumericIdentity;
@@ -18,14 +20,15 @@ import com.tn.datagrid.core.domain.Versioned;
  */
 public class SimpleMultiplicationCalculationHistogram extends CalculationHistogram
 {
-  private static final Identity IDENTITY_A = new NumericIdentity(1);
-  private static final Identity IDENTITY_B = new NumericIdentity(2);
+  private static final Identity IDENTITY_A = new NumericIdentity(1, 1);
+  private static final Identity IDENTITY_B = new NumericIdentity(2, 100);
   private static final Identity IDENTITY_CALCULATED_LATEST = new CalculatedIdentity<>(latest(multiply()), IDENTITY_A, IDENTITY_B);
   private static final Identity IDENTITY_CALCULATED_CLOSEST = new CalculatedIdentity<>(closest(multiply(), 1), IDENTITY_A, IDENTITY_B);
   private static final Versioned<Integer> VALUE_A = new Versioned<>(0, 5).update(2, 6);
-  private static final Versioned<Integer> VALUE_B = new Versioned<>(1, 7).update(3, 7);
+  private static final Versioned<Integer> VALUE_B = new Versioned<>(1, 7).update(3, 10);
 
   private IMap<Identity, Integer> calculatedIntegers;
+  private ValueGetter<Number> calculatedValueGetter;
 
   public static void main(String[] args)
   {
@@ -36,6 +39,7 @@ public class SimpleMultiplicationCalculationHistogram extends CalculationHistogr
   protected void setup(HazelcastInstance hazelcastInstance)
   {
     this.calculatedIntegers = hazelcastInstance.getMap(MAP_CALCULATED_INTEGERS);
+    this.calculatedValueGetter = new CalculatedValueGetter<>(hazelcastInstance);
 
     IMap<Identity, Versioned<Integer>> primaryIntegers = hazelcastInstance.getMap(MAP_PRIMARY_INTEGERS);
     primaryIntegers.put(IDENTITY_A, VALUE_A);
@@ -49,7 +53,7 @@ public class SimpleMultiplicationCalculationHistogram extends CalculationHistogr
 
     long start = System.nanoTime();
     //Number resultLatest = this.calculatedIntegers.get(IDENTITY_CALCULATED_LATEST);
-    Number resultLatest = this.calculatedIntegers.get(IDENTITY_CALCULATED_CLOSEST);
+    Number resultLatest = this.calculatedValueGetter.get(IDENTITY_CALCULATED_CLOSEST).get();
     recordValue(System.nanoTime() - start);
 
     if (!resultLatest.equals(multiply(VALUE_A.getClosest(1).get().get(), VALUE_B.getClosest(1).get().get())))

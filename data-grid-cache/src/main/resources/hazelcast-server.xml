@@ -27,9 +27,9 @@
 
   <map name="calculated.integers">
 
-    <map-store initial-mode="LAZY">
-      <class-name>com.tn.datagrid.cache.loaders.CalculatedValueMapLoader</class-name>
-    </map-store>
+    <!--<map-store initial-mode="LAZY">-->
+      <!--<class-name>com.tn.datagrid.cache.loaders.CalculatedValueMapLoader</class-name>-->
+    <!--</map-store>-->
 
   </map>
 

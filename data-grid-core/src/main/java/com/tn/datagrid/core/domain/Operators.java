@@ -59,6 +59,32 @@ public class Operators
     };
   }
 
+  public static <T> Operator<T, Versioned<T>, T> latestLeft(Operator<T, T, T> operator)
+  {
+    return new AbstractOperator<T, Versioned<T>, T>(OPERATOR_SYMBOL_LATEST, ((AbstractOperator<T, T, T>)operator).returnType)
+    {
+      @Override
+      public T apply(Versioned<T> left, T right)
+      {
+        logger.debug("Latest - left: {}, right: {}", left, right);
+        return operator.apply(left.get(), right);
+      }
+    };
+  }
+
+  public static <T> Operator<T, T, Versioned<T>> latestRight(Operator<T, T, T> operator)
+  {
+    return new AbstractOperator<T, T, Versioned<T>>(OPERATOR_SYMBOL_LATEST, ((AbstractOperator<T, T, T>)operator).returnType)
+    {
+      @Override
+      public T apply(T left, Versioned<T> right)
+      {
+        logger.debug("Latest - left: {}, right: {}", left, right);
+        return operator.apply(left, right.get());
+      }
+    };
+  }
+
   public static Operator<Number, Number, Number> multiply()
   {
     return new AbstractOperator<Number, Number, Number>(OPERATOR_SYMBOL_MULTIPLY, Number.class)

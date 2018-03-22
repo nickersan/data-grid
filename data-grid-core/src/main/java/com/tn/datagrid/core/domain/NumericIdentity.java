@@ -2,7 +2,9 @@ package com.tn.datagrid.core.domain;
 
 import static com.google.common.base.MoreObjects.toStringHelper;
 
-public class NumericIdentity extends Identity //implements PartitionAware<Integer>
+import com.hazelcast.core.PartitionAware;
+
+public class NumericIdentity extends Identity implements PartitionAware<Integer>
 {
   private int id;
 
@@ -12,8 +14,13 @@ public class NumericIdentity extends Identity //implements PartitionAware<Intege
 
   public NumericIdentity(int id)
   {
+    this(id, 1);
+  }
+
+  public NumericIdentity(int id, int partitionKey)
+  {
     this.id = id;
-    this.spurious = 1;
+    this.spurious = partitionKey;
   }
 
   public int get()
@@ -21,11 +28,11 @@ public class NumericIdentity extends Identity //implements PartitionAware<Intege
     return id;
   }
 
-//  @Override
-//  public Integer getPartitionKey()
-//  {
-//    return this.spurious;
-//  }
+  @Override
+  public Integer getPartitionKey()
+  {
+    return this.spurious;
+  }
 
   @Override
   public boolean equals(Object other)
