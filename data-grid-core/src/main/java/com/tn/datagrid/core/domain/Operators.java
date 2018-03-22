@@ -27,7 +27,7 @@ public class Operators
       @Override
       public T apply(Versioned<T> left, Versioned<T> right)
       {
-        logger.debug("Closest - left: {}, right: {}", left, right);
+        logger.trace("Closest - left: {}, right: {}", left, right);
 
         Optional<Versioned<T>> leftClosest = left.getClosest(version);
         if (!leftClosest.isPresent())
@@ -53,7 +53,7 @@ public class Operators
       @Override
       public T apply(Versioned<T> left, Versioned<T> right)
       {
-        logger.debug("Latest - left: {}, right: {}", left, right);
+        logger.trace("Latest - left: {}, right: {}", left, right);
         return operator.apply(left.get(), right.get());
       }
     };
@@ -66,7 +66,7 @@ public class Operators
       @Override
       public T apply(Versioned<T> left, T right)
       {
-        logger.debug("Latest - left: {}, right: {}", left, right);
+        logger.trace("Latest - left: {}, right: {}", left, right);
         return operator.apply(left.get(), right);
       }
     };
@@ -79,7 +79,7 @@ public class Operators
       @Override
       public T apply(T left, Versioned<T> right)
       {
-        logger.debug("Latest - left: {}, right: {}", left, right);
+        logger.trace("Latest - left: {}, right: {}", left, right);
         return operator.apply(left, right.get());
       }
     };
@@ -92,7 +92,7 @@ public class Operators
       @Override
       public Number apply(Number left, Number right)
       {
-        logger.debug("Multiply - left: {}, right: {}", left, right);
+        logger.trace("Multiply - left: {}, right: {}", left, right);
         return NumberUtils.multiply(left, right);
       }
     };

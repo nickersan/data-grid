@@ -4,6 +4,18 @@ import java.io.Serializable;
 
 public abstract class Identity implements Serializable
 {
+  private String location;
+
+  public Identity(String location)
+  {
+    this.location = location;
+  }
+
+  public String getLocation()
+  {
+    return location;
+  }
+
   public abstract boolean equals(Object other);
 
   public abstract int hashCode();

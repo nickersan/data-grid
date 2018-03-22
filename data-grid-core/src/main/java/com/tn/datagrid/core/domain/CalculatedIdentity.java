@@ -8,8 +8,9 @@ public class CalculatedIdentity<T, LT, RT> extends Identity
   private Identity leftIdentity;
   private Identity rightIdentity;
 
-  public CalculatedIdentity(Operator<T, LT, RT> operator, Identity leftIdentity, Identity rightIdentity)
+  public CalculatedIdentity(String location, Operator<T, LT, RT> operator, Identity leftIdentity, Identity rightIdentity)
   {
+    super(location);
     this.operator = operator;
     this.leftIdentity = leftIdentity;
     this.rightIdentity = rightIdentity;
@@ -35,7 +36,8 @@ public class CalculatedIdentity<T, LT, RT> extends Identity
   {
     return this == other || (
       other != null &&
-      getClass().equals(other.getClass()) &&
+      this.getClass().equals(other.getClass()) &&
+      this.getLocation().equals(((CalculatedIdentity)other).getLocation()) &&
       this.operator.equals(((CalculatedIdentity)other).operator) &&
       this.leftIdentity.equals(((CalculatedIdentity)other).leftIdentity) &&
       this.rightIdentity.equals(((CalculatedIdentity)other).rightIdentity)

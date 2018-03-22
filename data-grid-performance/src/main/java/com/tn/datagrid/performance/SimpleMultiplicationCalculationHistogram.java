@@ -9,7 +9,7 @@ import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
 
 import com.tn.datagrid.cao.ValueGetter;
-import com.tn.datagrid.cao.CalculatedValueGetter;
+import com.tn.datagrid.cao.CalculatedValueCao;
 import com.tn.datagrid.core.domain.CalculatedIdentity;
 import com.tn.datagrid.core.domain.Identity;
 import com.tn.datagrid.core.domain.NumericIdentity;
@@ -20,10 +20,10 @@ import com.tn.datagrid.core.domain.Versioned;
  */
 public class SimpleMultiplicationCalculationHistogram extends CalculationHistogram
 {
-  private static final Identity IDENTITY_A = new NumericIdentity(1, 1);
-  private static final Identity IDENTITY_B = new NumericIdentity(2, 100);
-  private static final Identity IDENTITY_CALCULATED_LATEST = new CalculatedIdentity<>(latest(multiply()), IDENTITY_A, IDENTITY_B);
-  private static final Identity IDENTITY_CALCULATED_CLOSEST = new CalculatedIdentity<>(closest(multiply(), 1), IDENTITY_A, IDENTITY_B);
+  private static final Identity IDENTITY_A = new NumericIdentity(MAP_PRIMARY_INTEGERS, 1);
+  private static final Identity IDENTITY_B = new NumericIdentity(MAP_PRIMARY_INTEGERS, 2);
+  private static final Identity IDENTITY_CALCULATED_LATEST = new CalculatedIdentity<>(MAP_CALCULATED_INTEGERS, latest(multiply()), IDENTITY_A, IDENTITY_B);
+  private static final Identity IDENTITY_CALCULATED_CLOSEST = new CalculatedIdentity<>(MAP_CALCULATED_INTEGERS, closest(multiply(), 1), IDENTITY_A, IDENTITY_B);
   private static final Versioned<Integer> VALUE_A = new Versioned<>(0, 5).update(2, 6);
   private static final Versioned<Integer> VALUE_B = new Versioned<>(1, 7).update(3, 10);
 
@@ -39,7 +39,7 @@ public class SimpleMultiplicationCalculationHistogram extends CalculationHistogr
   protected void setup(HazelcastInstance hazelcastInstance)
   {
     this.calculatedIntegers = hazelcastInstance.getMap(MAP_CALCULATED_INTEGERS);
-    this.calculatedValueGetter = new CalculatedValueGetter<>(hazelcastInstance);
+    this.calculatedValueGetter = new CalculatedValueCao<>(hazelcastInstance);
 
     IMap<Identity, Versioned<Integer>> primaryIntegers = hazelcastInstance.getMap(MAP_PRIMARY_INTEGERS);
     primaryIntegers.put(IDENTITY_A, VALUE_A);
