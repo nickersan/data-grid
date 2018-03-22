@@ -7,24 +7,24 @@ import com.hazelcast.core.IMap;
 
 import com.tn.datagrid.core.domain.CalculatedIdentity;
 import com.tn.datagrid.core.domain.Identity;
-import com.tn.datagrid.core.domain.NumberValue;
 import com.tn.datagrid.core.domain.NumericIdentity;
 import com.tn.datagrid.core.domain.Operators;
-import com.tn.datagrid.core.domain.Type;
 
 /**
  * Tests a time taken to do a hierarchical A * (B * C) calculation.
  */
 public class HierarchicalMultiplicationCalculationHistogram extends CalculationHistogram
 {
-  private static final Type<Number, NumberValue> NUMBER_TYPE = new Type<>(NumberValue.class, "number");
-  private static final NumberValue A = new NumberValue(new NumericIdentity<>(NUMBER_TYPE, 1), 5);
-  private static final NumberValue B = new NumberValue(new NumericIdentity<>(NUMBER_TYPE, 2), 7);
-  private static final NumberValue C = new NumberValue(new NumericIdentity<>(NUMBER_TYPE, 3), 3);
-  private static final Identity<Number, NumberValue> CALCULATED_IDENTITY_2 = new CalculatedIdentity<>(NUMBER_TYPE, Operators.multiply(), B.getIdentity(), C.getIdentity());
-  private static final Identity<Number, NumberValue> CALCULATED_IDENTITY_1 = new CalculatedIdentity<>(NUMBER_TYPE, Operators.multiply(), A.getIdentity(), CALCULATED_IDENTITY_2);
+  private static final Identity IDENTITY_A = new NumericIdentity(1);
+  private static final Identity IDENTITY_B = new NumericIdentity(2);
+  private static final Identity IDENTITY_C = new NumericIdentity(3);
+  private static final Identity IDENTITY_CALCULATED_2 = new CalculatedIdentity<>(Operators.multiply(), IDENTITY_B, IDENTITY_C);
+  private static final Identity IDENTITY_CALCULATED_1 = new CalculatedIdentity<>(Operators.multiply(), IDENTITY_A, IDENTITY_CALCULATED_2);
+  private static final Integer VALUE_A = 5;
+  private static final Integer VALUE_B = 7;
+  private static final Integer VALUE_C = 3;
 
-  private IMap<Identity<Number, NumberValue>, NumberValue> calculatedIntegers;
+  private IMap<Identity, Number> calculatedIntegers;
 
   public static void main(String[] args)
   {
@@ -36,10 +36,10 @@ public class HierarchicalMultiplicationCalculationHistogram extends CalculationH
   {
     this.calculatedIntegers = hazelcastInstance.getMap(MAP_CALCULATED_INTEGERS);
 
-    IMap<Identity<Number, NumberValue>, NumberValue> primaryIntegers = hazelcastInstance.getMap(MAP_PRIMARY_INTEGERS);
-    primaryIntegers.put(A.getIdentity(), A);
-    primaryIntegers.put(B.getIdentity(), B);
-    primaryIntegers.put(C.getIdentity(), C);
+    IMap<Identity, Number> primaryIntegers = hazelcastInstance.getMap(MAP_PRIMARY_INTEGERS);
+    primaryIntegers.put(IDENTITY_A, VALUE_A);
+    primaryIntegers.put(IDENTITY_B, VALUE_B);
+    primaryIntegers.put(IDENTITY_C, VALUE_C);
   }
 
   @Override
@@ -48,10 +48,10 @@ public class HierarchicalMultiplicationCalculationHistogram extends CalculationH
     this.calculatedIntegers.clear();
 
     long start = System.nanoTime();
-    NumberValue result = calculatedIntegers.get(CALCULATED_IDENTITY_1);
+    Number result = calculatedIntegers.get(IDENTITY_CALCULATED_1);
     recordValue(System.nanoTime() - start);
 
-    if (!result.get().equals(multiple(A.get(), (multiple(B.get(), C.get())))))
+    if (!result.equals(multiple(VALUE_A, (multiple(VALUE_B, VALUE_C)))))
     {
       throw new IllegalStateException("Calculation failed: " + result);
     }

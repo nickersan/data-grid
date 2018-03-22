@@ -1,5 +1,8 @@
 package com.tn.datagrid.performance;
 
+import static com.tn.datagrid.core.domain.Operators.closest;
+import static com.tn.datagrid.core.domain.Operators.latest;
+import static com.tn.datagrid.core.domain.Operators.multiply;
 import static com.tn.datagrid.core.util.NumberUtils.multiple;
 
 import com.hazelcast.core.HazelcastInstance;
@@ -7,22 +10,22 @@ import com.hazelcast.core.IMap;
 
 import com.tn.datagrid.core.domain.CalculatedIdentity;
 import com.tn.datagrid.core.domain.Identity;
-import com.tn.datagrid.core.domain.NumberValue;
 import com.tn.datagrid.core.domain.NumericIdentity;
-import com.tn.datagrid.core.domain.Operators;
-import com.tn.datagrid.core.domain.Type;
+import com.tn.datagrid.core.domain.Versioned;
 
 /**
  * Tests a time taken to do a simple A * B calculation.
  */
 public class SimpleMultiplicationCalculationHistogram extends CalculationHistogram
 {
-  private static final Type<Number, NumberValue> NUMBER_TYPE = new Type<>(NumberValue.class, "number");
-  private static final NumberValue A = new NumberValue(new NumericIdentity<>(NUMBER_TYPE, 1), 5);
-  private static final NumberValue B = new NumberValue(new NumericIdentity<>(NUMBER_TYPE, 2), 7);
-  private static final Identity<Number, NumberValue> CALCULATED_IDENTITY = new CalculatedIdentity<>(NUMBER_TYPE, Operators.multiply(), A.getIdentity(), B.getIdentity());
+  private static final Identity IDENTITY_A = new NumericIdentity(1);
+  private static final Identity IDENTITY_B = new NumericIdentity(2);
+  private static final Identity IDENTITY_CALCULATED_LATEST = new CalculatedIdentity<>(latest(multiply()), IDENTITY_A, IDENTITY_B);
+  private static final Identity IDENTITY_CALCULATED_CLOSEST = new CalculatedIdentity<>(closest(multiply(), 1), IDENTITY_A, IDENTITY_B);
+  private static final Versioned<Integer> VALUE_A = new Versioned<>(0, 5).update(2, 6);
+  private static final Versioned<Integer> VALUE_B = new Versioned<>(1, 7).update(3, 7);
 
-  private IMap<Identity<Number, NumberValue>, NumberValue> calculatedIntegers;
+  private IMap<Identity, Integer> calculatedIntegers;
 
   public static void main(String[] args)
   {
@@ -34,9 +37,9 @@ public class SimpleMultiplicationCalculationHistogram extends CalculationHistogr
   {
     this.calculatedIntegers = hazelcastInstance.getMap(MAP_CALCULATED_INTEGERS);
 
-    IMap<Identity<Number, NumberValue>, NumberValue> primaryIntegers = hazelcastInstance.getMap(MAP_PRIMARY_INTEGERS);
-    primaryIntegers.put(A.getIdentity(), A);
-    primaryIntegers.put(B.getIdentity(), B);
+    IMap<Identity, Versioned<Integer>> primaryIntegers = hazelcastInstance.getMap(MAP_PRIMARY_INTEGERS);
+    primaryIntegers.put(IDENTITY_A, VALUE_A);
+    primaryIntegers.put(IDENTITY_B, VALUE_B);
   }
 
   @Override
@@ -45,12 +48,13 @@ public class SimpleMultiplicationCalculationHistogram extends CalculationHistogr
     this.calculatedIntegers.clear();
 
     long start = System.nanoTime();
-    NumberValue result = this.calculatedIntegers.get(CALCULATED_IDENTITY);
+    //Number resultLatest = this.calculatedIntegers.get(IDENTITY_CALCULATED_LATEST);
+    Number resultLatest = this.calculatedIntegers.get(IDENTITY_CALCULATED_CLOSEST);
     recordValue(System.nanoTime() - start);
 
-    if (!result.get().equals(multiple(A.get(), B.get())))
+    if (!resultLatest.equals(multiple(VALUE_A.getClosest(1).get().get(), VALUE_B.getClosest(1).get().get())))
     {
-      throw new IllegalStateException("Calculation failed: " + result);
+      throw new IllegalStateException("Calculation failed: " + resultLatest);
     }
   }
 }

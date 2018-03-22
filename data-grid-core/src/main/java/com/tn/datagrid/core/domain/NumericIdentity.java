@@ -2,7 +2,7 @@ package com.tn.datagrid.core.domain;
 
 import static com.google.common.base.MoreObjects.toStringHelper;
 
-public class NumericIdentity<T, V extends Value<T, V>> extends Identity<T, V> //implements PartitionAware<Integer>
+public class NumericIdentity extends Identity //implements PartitionAware<Integer>
 {
   private int id;
 
@@ -10,9 +10,8 @@ public class NumericIdentity<T, V extends Value<T, V>> extends Identity<T, V> //
   @SuppressWarnings({"FieldCanBeLocal", "unused"})
   private int spurious;
 
-  public NumericIdentity(Type<T, V> type, int id)
+  public NumericIdentity(int id)
   {
-    super(type);
     this.id = id;
     this.spurious = 1;
   }
@@ -34,7 +33,6 @@ public class NumericIdentity<T, V extends Value<T, V>> extends Identity<T, V> //
     return this == other || (
       other != null &&
       this.getClass().equals(other.getClass()) &&
-      this.getType().equals(((NumericIdentity)other).getType()) &&
       this.id == ((NumericIdentity)other).id
     );
   }
@@ -49,7 +47,6 @@ public class NumericIdentity<T, V extends Value<T, V>> extends Identity<T, V> //
   public String toString()
   {
     return toStringHelper(this)
-      .add("type", this.getType())
       .add("id", this.id)
       .toString();
   }

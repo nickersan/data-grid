@@ -2,31 +2,30 @@ package com.tn.datagrid.core.domain;
 
 import static com.google.common.base.MoreObjects.toStringHelper;
 
-public class CalculatedIdentity<T, V extends Value<T, V>, LT, LV extends Value<LT, LV>, RT, RV extends Value<RT, RV>> extends Identity<T, V>
+public class CalculatedIdentity<T, LT, RT> extends Identity
 {
-  private Operator<T, V, LT, LV, RT, RV> operator;
-  private Identity<LT, LV> leftIdentity;
-  private Identity<RT, RV> rightIdentity;
+  private Operator<T, LT, RT> operator;
+  private Identity leftIdentity;
+  private Identity rightIdentity;
 
-  public CalculatedIdentity(Type<T, V> type, Operator<T, V, LT, LV, RT, RV> operator, Identity<LT, LV> leftIdentity, Identity<RT, RV> rightIdentity)
+  public CalculatedIdentity(Operator<T, LT, RT> operator, Identity leftIdentity, Identity rightIdentity)
   {
-    super(type);
     this.operator = operator;
     this.leftIdentity = leftIdentity;
     this.rightIdentity = rightIdentity;
   }
 
-  public Identity<LT, LV> getLeftIdentity()
+  public Identity getLeftIdentity()
   {
     return this.leftIdentity;
   }
 
-  public Operator<T, V, LT, LV, RT, RV> getOperator()
+  public Operator<T, LT, RT> getOperator()
   {
     return this.operator;
   }
 
-  public Identity<RT, RV> getRightIdentity()
+  public Identity getRightIdentity()
   {
     return this.rightIdentity;
   }
