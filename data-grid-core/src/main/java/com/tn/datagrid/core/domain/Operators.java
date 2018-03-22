@@ -4,13 +4,13 @@ import static java.lang.String.*;
 
 import static com.google.common.base.MoreObjects.toStringHelper;
 
-import static com.tn.datagrid.core.util.NumberUtils.multiple;
-
 import java.io.Serializable;
 import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.tn.datagrid.core.util.NumberUtils;
 
 public class Operators
 {
@@ -27,6 +27,8 @@ public class Operators
       @Override
       public T apply(Versioned<T> left, Versioned<T> right)
       {
+        logger.debug("Closest - left: {}, right: {}", left, right);
+
         Optional<Versioned<T>> leftClosest = left.getClosest(version);
         if (!leftClosest.isPresent())
         {
@@ -51,6 +53,7 @@ public class Operators
       @Override
       public T apply(Versioned<T> left, Versioned<T> right)
       {
+        logger.debug("Latest - left: {}, right: {}", left, right);
         return operator.apply(left.get(), right.get());
       }
     };
@@ -64,7 +67,7 @@ public class Operators
       public Number apply(Number left, Number right)
       {
         logger.debug("Multiply - left: {}, right: {}", left, right);
-        return multiple(left, right);
+        return NumberUtils.multiply(left, right);
       }
     };
   }

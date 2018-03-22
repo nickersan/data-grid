@@ -1,6 +1,6 @@
 package com.tn.datagrid.performance;
 
-import static com.tn.datagrid.core.util.NumberUtils.multiple;
+import static com.tn.datagrid.core.util.NumberUtils.multiply;
 
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
@@ -51,7 +51,7 @@ public class HierarchicalMultiplicationCalculationHistogram extends CalculationH
     Number result = calculatedIntegers.get(IDENTITY_CALCULATED_1);
     recordValue(System.nanoTime() - start);
 
-    if (!result.equals(multiple(VALUE_A, (multiple(VALUE_B, VALUE_C)))))
+    if (!result.equals(multiply(VALUE_A, (multiply(VALUE_B, VALUE_C)))))
     {
       throw new IllegalStateException("Calculation failed: " + result);
     }

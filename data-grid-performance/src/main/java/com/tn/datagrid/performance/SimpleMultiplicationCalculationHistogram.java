@@ -3,7 +3,7 @@ package com.tn.datagrid.performance;
 import static com.tn.datagrid.core.domain.Operators.closest;
 import static com.tn.datagrid.core.domain.Operators.latest;
 import static com.tn.datagrid.core.domain.Operators.multiply;
-import static com.tn.datagrid.core.util.NumberUtils.multiple;
+import static com.tn.datagrid.core.util.NumberUtils.multiply;
 
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
@@ -52,7 +52,7 @@ public class SimpleMultiplicationCalculationHistogram extends CalculationHistogr
     Number resultLatest = this.calculatedIntegers.get(IDENTITY_CALCULATED_CLOSEST);
     recordValue(System.nanoTime() - start);
 
-    if (!resultLatest.equals(multiple(VALUE_A.getClosest(1).get().get(), VALUE_B.getClosest(1).get().get())))
+    if (!resultLatest.equals(multiply(VALUE_A.getClosest(1).get().get(), VALUE_B.getClosest(1).get().get())))
     {
       throw new IllegalStateException("Calculation failed: " + resultLatest);
     }

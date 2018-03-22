@@ -103,7 +103,7 @@ public class NumberUtils
     }
   }
 
-  public static Number multiple(Number left, Number right)
+  public static Number multiply(Number left, Number right)
   {
     Class<? extends Number> targetType = toTargetType(left, right);
 
