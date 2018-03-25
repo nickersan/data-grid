@@ -27,11 +27,6 @@
     </dependency>
 
     <dependency>
-      <groupId>com.tn.data-grid</groupId>
-      <artifactId>data-grid-cache-access</artifactId>
-    </dependency>
-
-    <dependency>
       <groupId>org.hdrhistogram</groupId>
       <artifactId>HdrHistogram</artifactId>
       <version>2.1.10</version>
