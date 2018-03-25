@@ -23,6 +23,7 @@ public class CalculatedValueMapLoader<T, LT, RT> implements MapLoader<Calculated
 
   public CalculatedValueMapLoader()
   {
+    //ClientConfig clientConfig = new ClientConfig().
     this.hazelcastInstance = HazelcastClient.newHazelcastClient();
   }
 
@@ -64,13 +65,13 @@ public class CalculatedValueMapLoader<T, LT, RT> implements MapLoader<Calculated
 
     if (identity instanceof CalculatedIdentity)
     {
-      IMap<Identity, T1> calculatedIntegers = hazelcastInstance.getMap("calculated.integers");
-      value = calculatedIntegers.get(identity);
+      IMap<Identity, T1> calculated = hazelcastInstance.getMap(identity.getLocation());
+      value = calculated.get(identity);
     }
     else
     {
-      IMap<Identity, T1> primaryIntegers = hazelcastInstance.getMap("primary.integers");
-      value =  primaryIntegers.get(identity);
+      IMap<Identity, T1> primaryIntegers = hazelcastInstance.getMap(identity.getLocation());
+      value = primaryIntegers.get(identity);
     }
 
     logger.debug("Got value: {}", value);

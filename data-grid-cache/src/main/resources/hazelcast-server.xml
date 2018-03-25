@@ -9,6 +9,11 @@
 
   <properties>
     <property name="hazelcast.jmx">true</property>
+
+    <!-- 1 thread per partition to avoid deadlock when loading values for calculations -->
+    <property name="hazelcast.partition.count">271</property>
+    <property name="hazelcast.operation.thread.count">271</property>
+
   </properties>
 
   <!--<map name="strings">-->
@@ -25,11 +30,15 @@
 
   <!--</map>-->
 
-  <map name="calculated.integers">
+  <map name="calculated.*">
 
-    <!--<map-store initial-mode="LAZY">-->
-      <!--<class-name>com.tn.datagrid.cache.loaders.CalculatedValueMapLoader</class-name>-->
-    <!--</map-store>-->
+    <map-store initial-mode="LAZY">
+      <class-name>com.tn.datagrid.cache.loaders.CalculatedValueMapLoader</class-name>
+    </map-store>
+
+  </map>
+
+  <map name="primary.*">
 
   </map>
 
