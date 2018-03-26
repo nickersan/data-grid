@@ -8,8 +8,6 @@ import static com.tn.datagrid.core.util.NumberUtils.multiply;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
 
-import com.tn.datagrid.cao.CalculatedValueCao;
-import com.tn.datagrid.cao.ValueGetter;
 import com.tn.datagrid.core.domain.CalculatedIdentity;
 import com.tn.datagrid.core.domain.Identity;
 import com.tn.datagrid.core.domain.NumericIdentity;
@@ -30,7 +28,6 @@ public class HierarchicalMultiplicationCalculationHistogram extends CalculationH
   private static final Versioned<Integer> VALUE_C = new Versioned<>(2, 3).update(5, 80);
 
   private IMap<Identity, Number> calculatedIntegers;
-  private ValueGetter<Number> calculatedValueGetter;
 
   public static void main(String[] args)
   {
@@ -41,7 +38,6 @@ public class HierarchicalMultiplicationCalculationHistogram extends CalculationH
   protected void setup(HazelcastInstance hazelcastInstance)
   {
     this.calculatedIntegers = hazelcastInstance.getMap(MAP_CALCULATED_INTEGERS);
-    this.calculatedValueGetter = new CalculatedValueCao<>(hazelcastInstance);
 
     IMap<Identity, Versioned<Integer>> primaryIntegers = hazelcastInstance.getMap(MAP_PRIMARY_INTEGERS);
     primaryIntegers.put(IDENTITY_A, VALUE_A);
@@ -55,7 +51,7 @@ public class HierarchicalMultiplicationCalculationHistogram extends CalculationH
     this.calculatedIntegers.clear();
 
     long start = System.nanoTime();
-    Number result = calculatedValueGetter.get(IDENTITY_CALCULATED_1).get();
+    Number result = calculatedIntegers.get(IDENTITY_CALCULATED_1);
     recordValue(System.nanoTime() - start);
 
     if (!result.equals(multiply(VALUE_A.get(), (multiply(VALUE_B.get(), VALUE_C.get())))))

@@ -6,6 +6,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.hazelcast.client.HazelcastClient;
+import com.hazelcast.client.config.ClientConfig;
+import com.hazelcast.config.EvictionConfig;
+import com.hazelcast.config.EvictionPolicy;
+import com.hazelcast.config.InMemoryFormat;
+import com.hazelcast.config.NearCacheConfig;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
 import com.hazelcast.core.MapLoader;
@@ -23,7 +28,23 @@ public class CalculatedValueMapLoader<T, LT, RT> implements MapLoader<Calculated
 
   public CalculatedValueMapLoader()
   {
-    //ClientConfig clientConfig = new ClientConfig().
+    EvictionConfig evictionConfig = new EvictionConfig()
+      .setMaximumSizePolicy(EvictionConfig.MaxSizePolicy.ENTRY_COUNT)
+      .setEvictionPolicy(EvictionPolicy.LFU)
+      .setSize(1000);
+
+    NearCacheConfig nearCacheConfig = new NearCacheConfig()
+      .setName("primary.*")
+      .setInMemoryFormat(InMemoryFormat.OBJECT)
+      .setInvalidateOnChange(true)
+      .setEvictionConfig(evictionConfig);
+
+    Map<String, NearCacheConfig> nearCacheConfigMap = new HashMap<>();
+    nearCacheConfigMap.put(nearCacheConfig.getName(), nearCacheConfig);
+
+    ClientConfig clientConfig = new ClientConfig();
+    clientConfig.setNearCacheConfigMap(nearCacheConfigMap);
+    
     this.hazelcastInstance = HazelcastClient.newHazelcastClient();
   }
 
