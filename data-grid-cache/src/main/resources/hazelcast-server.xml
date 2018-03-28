@@ -32,9 +32,9 @@
 
   <map name="calculated.*">
 
-    <map-store initial-mode="LAZY">
-      <class-name>com.tn.datagrid.cache.loaders.CalculatedValueMapLoader</class-name>
-    </map-store>
+    <!--<map-store initial-mode="LAZY">-->
+      <!--<class-name>com.tn.datagrid.cache.loaders.CalculatedValueMapLoader</class-name>-->
+    <!--</map-store>-->
 
   </map>
 
@@ -53,5 +53,14 @@
     </serializers>
 
   </serialization>
+
+  <services>
+
+    <service enabled="true">
+      <name>CalculationService</name>
+      <class-name>com.tn.datagrid.core.services.CalculationService</class-name>
+    </service>
+
+  </services>
 
 </hazelcast>
