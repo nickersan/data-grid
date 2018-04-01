@@ -11,8 +11,8 @@
     <property name="hazelcast.jmx">true</property>
 
     <!-- 1 thread per partition to avoid deadlock when loading values for calculations -->
-    <property name="hazelcast.partition.count">271</property>
-    <property name="hazelcast.operation.thread.count">271</property>
+    <!--<property name="hazelcast.partition.count">271</property>-->
+    <!--<property name="hazelcast.operation.thread.count">271</property>-->
 
   </properties>
 
@@ -57,8 +57,8 @@
   <services>
 
     <service enabled="true">
-      <name>CalculationService</name>
-      <class-name>com.tn.datagrid.core.services.CalculationService</class-name>
+      <name>tn:impl:query</name>
+      <class-name>com.tn.datagrid.cache.services.QueryService</class-name>
     </service>
 
   </services>

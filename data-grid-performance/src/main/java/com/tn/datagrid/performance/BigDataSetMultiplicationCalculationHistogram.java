@@ -12,6 +12,8 @@ import java.util.function.Supplier;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
 
+import com.tn.datagrid.cao.CalculatedValueCao;
+import com.tn.datagrid.cao.ValueGetter;
 import com.tn.datagrid.core.domain.CalculatedIdentity;
 import com.tn.datagrid.core.domain.CompositeIdentity;
 import com.tn.datagrid.core.domain.Identity;
@@ -26,12 +28,15 @@ public class BigDataSetMultiplicationCalculationHistogram extends CalculationHis
   private static final int PRODUCT_MIN_PRICE = 49;
   private static final String PRODUCT_PRICES = "primary.productPrices";
   private static final String SALE_VALUES = "calculated.saleValueIdentities";
+  private static final String SALE_VALUE_QUERY = "saleValueQuery";
   private static final String SALES = "primary.sales";
   private static final String SALES_PEOPLE = "primary.salesPeople";
   private static final int SALES_PERSON_COUNT = 10;
   private static final String SALES_PERSON_PREFIX = "SP_";
 
   private Set<Identity> saleValueIdentities;
+  //private Query<Integer> salesValueQuery;
+  private ValueGetter<Integer> salesValueGetter;
   private IMap<Identity, Integer> salesValues;
 
   public static void main(String[] args)
@@ -44,6 +49,8 @@ public class BigDataSetMultiplicationCalculationHistogram extends CalculationHis
   {
     this.saleValueIdentities = new HashSet<>();
     this.salesValues = hazelcastInstance.getMap(SALE_VALUES);
+    //this.salesValueQuery = hazelcastInstance.getDistributedObject(Query.SERVICE_NAME, SALE_VALUE_QUERY);
+    this.salesValueGetter = new CalculatedValueCao<>(hazelcastInstance);
 
     Random random = new Random();
 
@@ -85,13 +92,14 @@ public class BigDataSetMultiplicationCalculationHistogram extends CalculationHis
     this.salesValues.clear();
 
     long start = System.nanoTime();
-    Map<Identity, Integer> results = this.salesValues.getAll(this.saleValueIdentities);
-//    Number resultLatest = this.calculatedValueGetter.get(IDENTITY_CALCULATED_CLOSEST).get();
+    //Map<Identity, Integer> results = this.salesValueQuery.getAll(this.saleValueIdentities);
+//    Map<Identity, Integer> results = this.salesValues.getAll(this.saleValueIdentities);
+    Map<Identity, Integer> results = this.salesValueGetter.getAll(this.saleValueIdentities);
     recordValue(System.nanoTime() - start);
 
     if (results.size() != this.saleValueIdentities.size())
     {
-      throw new IllegalStateException("Calculation failed: " + results);
+      throw new IllegalStateException("Query failed: " + results);
     }
   }
 

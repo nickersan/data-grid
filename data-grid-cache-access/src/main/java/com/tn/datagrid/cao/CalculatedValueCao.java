@@ -1,6 +1,7 @@
 package com.tn.datagrid.cao;
 
 import static java.util.Collections.singleton;
+import static java.util.stream.Collectors.toMap;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -8,6 +9,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Function;
 
 import com.hazelcast.core.HazelcastInstance;
 import org.slf4j.Logger;
@@ -32,6 +34,13 @@ public class CalculatedValueCao<T> implements ValueGetter<T>
   {
     Map<Identity, Object> knownValues = loadKnownValues(singleton(identity));
     return Optional.ofNullable(resolveValue(identity, knownValues));
+  }
+
+  @Override
+  public Map<Identity, T> getAll(Set<Identity> identities)
+  {
+    Map<Identity, Object> knownValues = loadKnownValues(identities);
+    return identities.parallelStream().collect(toMap(Function.identity(), (identity) -> resolveValue(identity, knownValues)));
   }
 
   private Map<Identity, Object> loadKnownValues(Collection<Identity> identities)

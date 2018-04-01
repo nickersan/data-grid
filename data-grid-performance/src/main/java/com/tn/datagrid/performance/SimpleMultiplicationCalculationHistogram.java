@@ -57,7 +57,7 @@ public class SimpleMultiplicationCalculationHistogram extends CalculationHistogr
     //if (!resultLatest.equals(multiply(VALUE_A.getClosest(1).get().get(), VALUE_B.getClosest(1).get().get())))
     if (!resultLatest.equals(multiply(VALUE_A.get(), VALUE_B.get())))
     {
-      throw new IllegalStateException("Calculation failed: " + resultLatest);
+      throw new IllegalStateException("Query failed: " + resultLatest);
     }
   }
 }

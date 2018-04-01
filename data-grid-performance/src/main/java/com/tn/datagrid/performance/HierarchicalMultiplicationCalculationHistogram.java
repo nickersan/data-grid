@@ -56,7 +56,7 @@ public class HierarchicalMultiplicationCalculationHistogram extends CalculationH
 
     if (!result.equals(multiply(VALUE_A.get(), (multiply(VALUE_B.get(), VALUE_C.get())))))
     {
-      throw new IllegalStateException("Calculation failed: " + result);
+      throw new IllegalStateException("Query failed: " + result);
     }
   }
 }

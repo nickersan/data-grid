@@ -3,8 +3,13 @@ package com.tn.datagrid.performance;
 import java.io.PrintStream;
 
 import com.hazelcast.client.HazelcastClient;
+import com.hazelcast.client.config.ClientConfig;
+import com.hazelcast.client.config.ProxyFactoryConfig;
 import com.hazelcast.core.HazelcastInstance;
 import org.HdrHistogram.Histogram;
+
+import com.tn.datagrid.core.services.ClientQueryProxy;
+import com.tn.datagrid.core.services.Query;
 
 public abstract class CalculationHistogram
 {
@@ -19,7 +24,15 @@ public abstract class CalculationHistogram
 
   public final void run(PrintStream out)
   {
-    HazelcastInstance hazelcastInstance = HazelcastClient.newHazelcastClient();
+    ProxyFactoryConfig queryServiceProxyConfig = new ProxyFactoryConfig();
+    queryServiceProxyConfig.setService(Query.SERVICE_NAME);
+    queryServiceProxyConfig.setClassName(ClientQueryProxy.class.getCanonicalName());
+    queryServiceProxyConfig.setFactoryImpl(ClientQueryProxy.factory());
+
+    ClientConfig clientConfig = new ClientConfig();
+    clientConfig.addProxyFactoryConfig(queryServiceProxyConfig);
+
+    HazelcastInstance hazelcastInstance = HazelcastClient.newHazelcastClient(clientConfig);
 
     try
     {
