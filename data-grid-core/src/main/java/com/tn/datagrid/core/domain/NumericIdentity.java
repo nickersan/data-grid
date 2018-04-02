@@ -2,23 +2,17 @@ package com.tn.datagrid.core.domain;
 
 import static com.google.common.base.MoreObjects.toStringHelper;
 
+import javax.annotation.Nonnull;
+
 import com.hazelcast.core.PartitionAware;
 
-public class NumericIdentity extends Identity implements PartitionAware<Integer>
+public class NumericIdentity extends Identity implements Comparable<NumericIdentity>
 {
-  private int partition;
   private int id;
 
   public NumericIdentity(String location, int id)
   {
     super(location);
-    this.id = id;
-  }
-
-  public NumericIdentity(int partition, String location, int id)
-  {
-    super(location);
-    this.partition = partition;
     this.id = id;
   }
 
@@ -54,8 +48,8 @@ public class NumericIdentity extends Identity implements PartitionAware<Integer>
   }
 
   @Override
-  public Integer getPartitionKey()
+  public int compareTo(@Nonnull NumericIdentity other)
   {
-    return this.partition;
+    return Integer.compare(this.id, other.id);
   }
 }

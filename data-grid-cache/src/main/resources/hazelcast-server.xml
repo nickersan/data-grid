@@ -36,10 +36,15 @@
       <!--<class-name>com.tn.datagrid.cache.loaders.CalculatedValueMapLoader</class-name>-->
     <!--</map-store>-->
 
+    <near-cache>
+      <in-memory-format>OBJECT</in-memory-format>
+    </near-cache>
   </map>
 
   <map name="primary.*">
-
+    <near-cache>
+      <in-memory-format>OBJECT</in-memory-format>
+    </near-cache>
   </map>
 
   <serialization>
@@ -54,13 +59,13 @@
 
   </serialization>
 
-  <services>
+  <!--<services>-->
 
-    <service enabled="true">
-      <name>tn:impl:query</name>
-      <class-name>com.tn.datagrid.cache.services.QueryService</class-name>
-    </service>
+    <!--<service enabled="true">-->
+      <!--<name>tn:impl:query</name>-->
+      <!--<class-name>com.tn.datagrid.cache.services.QueryService</class-name>-->
+    <!--</service>-->
 
-  </services>
+  <!--</services>-->
 
 </hazelcast>

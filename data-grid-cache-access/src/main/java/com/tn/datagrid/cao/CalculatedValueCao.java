@@ -1,85 +1,84 @@
 package com.tn.datagrid.cao;
 
-import static java.util.Collections.singleton;
-import static java.util.stream.Collectors.toMap;
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.toList;
 
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.function.Function;
+import java.util.concurrent.ExecutionException;
 
 import com.hazelcast.core.HazelcastInstance;
+import com.hazelcast.core.IExecutorService;
+import com.hazelcast.core.IMap;
+import com.hazelcast.core.Member;
+import com.hazelcast.core.PartitionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.tn.datagrid.core.domain.CalculatedIdentity;
 import com.tn.datagrid.core.domain.Identity;
+import com.tn.datagrid.core.tasks.CalculatorTask;
+import com.tn.datagrid.core.util.ConcurrencyUtils;
 
 public class CalculatedValueCao<T> implements ValueGetter<T>
 {
+  private static final String DEFAULT_EXECUTOR_SERVICE = "default";
+
   private static Logger logger = LoggerFactory.getLogger(CalculatedValueCao.class);
 
+  private String executorService;
   private HazelcastInstance hazelcastInstance;
 
   public CalculatedValueCao(HazelcastInstance hazelcastInstance)
   {
     this.hazelcastInstance = hazelcastInstance;
+    this.executorService = DEFAULT_EXECUTOR_SERVICE;
+  }
+
+  public void setExecutorService(String executorService)
+  {
+    this.executorService = executorService;
   }
 
   @Override
-  public Optional<T> get(Identity identity)
+  public Map<Identity, T> getAll(Collection<Identity> identities) throws CaoException
   {
-    Map<Identity, Object> knownValues = loadKnownValues(singleton(identity));
-    return Optional.ofNullable(resolveValue(identity, knownValues));
+    //return identities.parallelStream().collect(toMap(Function.identity(), this::resolveValue));
+    return getAllWithTask(identities);
   }
 
-  @Override
-  public Map<Identity, T> getAll(Set<Identity> identities)
+  private Map<Identity, T> getAllWithTask(Collection<Identity> identities) throws CaoException
   {
-    Map<Identity, Object> knownValues = loadKnownValues(identities);
-    return identities.parallelStream().collect(toMap(Function.identity(), (identity) -> resolveValue(identity, knownValues)));
-  }
-
-  private Map<Identity, Object> loadKnownValues(Collection<Identity> identities)
-  {
-    Map<Identity, Object> knownValues = new HashMap<>();
-
-    Map<String, Set<Identity>> identitiesByLocation = new HashMap<>();
-    identities.forEach((identity) -> groupIdentitiesByLocation(identity, identitiesByLocation));
-
-    for (Map.Entry<String, Set<Identity>> identitiesForLocation : identitiesByLocation.entrySet())
+    try
     {
-      knownValues.putAll(this.hazelcastInstance.<Identity, Object>getMap(identitiesForLocation.getKey()).getAll(identitiesForLocation.getValue()));
+      PartitionService partitionService = this.hazelcastInstance.getPartitionService();
+      Map<Member, List<Identity>> identitiesByMember = identities.stream().collect(groupingBy((identity) -> partitionService.getPartition(identity).getOwner()));
+
+      IExecutorService executorService = this.hazelcastInstance.getExecutorService(this.executorService);
+
+      return ConcurrencyUtils.getMap(
+        identitiesByMember.entrySet().stream()
+          .map((entry) -> executorService.submitToMember(new CalculatorTask<T>(entry.getValue()), entry.getKey()))
+          .collect(toList())
+      );
     }
-
-    return knownValues;
-  }
-
-  private void groupIdentitiesByLocation(Identity identity, Map<String, Set<Identity>> identitiesByLocation)
-  {
-    identitiesByLocation.computeIfAbsent(identity.getLocation(), (location) -> new HashSet<>()).add(identity);
-
-    if (identity instanceof CalculatedIdentity)
+    catch (InterruptedException | ExecutionException e)
     {
-      CalculatedIdentity calculatedIdentity = (CalculatedIdentity)identity;
-      groupIdentitiesByLocation(calculatedIdentity.getLeftIdentity(), identitiesByLocation);
-      groupIdentitiesByLocation(calculatedIdentity.getRightIdentity(), identitiesByLocation);
+      throw new CaoException("Failed to get while waiting for future to complete", e);
     }
   }
 
-  private <T1> T1 resolveValue(Identity identity, Map<Identity, Object> knownValues)
+  private <T1> T1 resolveValue(Identity identity)
   {
     logger.trace("Resolving value for: {}", identity);
 
+    IMap<Identity, T1> map = hazelcastInstance.getMap(identity.getLocation());
     T1 value;
 
     if (identity instanceof CalculatedIdentity)
     {
-      //noinspection unchecked
-      value = (T1)knownValues.get(identity);
+      value = map.get(identity);
 
       if (value == null)
       {
@@ -89,20 +88,17 @@ public class CalculatedValueCao<T> implements ValueGetter<T>
         logger.trace("Calculating value for: {}", calculatedIdentity);
 
         value = calculatedIdentity.getOperator().apply(
-          resolveValue(calculatedIdentity.getLeftIdentity(), knownValues),
-          resolveValue(calculatedIdentity.getRightIdentity(), knownValues)
+          resolveValue(calculatedIdentity.getLeftIdentity()),
+          resolveValue(calculatedIdentity.getRightIdentity())
         );
 
-        knownValues.put(identity, value);
         hazelcastInstance.getMap(identity.getLocation()).putAsync(identity, value);
       }
     }
     else
     {
       //TODO: handle missing primary value - Nick Holt 2018/3/22
-
-      //noinspection unchecked
-      value = (T1)knownValues.get(identity);
+      value = map.get(identity);
     }
 
     logger.trace("Got value: {} for: {}", value, identity);

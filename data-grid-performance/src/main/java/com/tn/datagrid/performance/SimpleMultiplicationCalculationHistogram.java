@@ -18,8 +18,8 @@ import com.tn.datagrid.core.domain.Versioned;
  */
 public class SimpleMultiplicationCalculationHistogram extends CalculationHistogram
 {
-  private static final Identity IDENTITY_A = new NumericIdentity(1, MAP_PRIMARY_INTEGERS, 1);
-  private static final Identity IDENTITY_B = new NumericIdentity(100, MAP_PRIMARY_INTEGERS, 2);
+  private static final Identity IDENTITY_A = new NumericIdentity(MAP_PRIMARY_INTEGERS, 1);
+  private static final Identity IDENTITY_B = new NumericIdentity(MAP_PRIMARY_INTEGERS, 2);
   private static final Identity IDENTITY_CALCULATED_LATEST = new CalculatedIdentity<>(MAP_CALCULATED_INTEGERS, latest(multiply()), IDENTITY_A, IDENTITY_B);
   private static final Identity IDENTITY_CALCULATED_CLOSEST = new CalculatedIdentity<>(MAP_CALCULATED_INTEGERS, closest(multiply(), 1), IDENTITY_A, IDENTITY_B);
   private static final Versioned<Integer> VALUE_A = new Versioned<>(0, 5).update(2, 6);
