@@ -25,17 +25,19 @@ public class Operators
     return new AbstractOperator<T, Versioned<T>, Versioned<T>>(format(FORMAT_VERSIONED_OPERATOR_SYMBOL, version), ((AbstractOperator<T, T, T>)operator).returnType)
     {
       @Override
-      public T apply(Versioned<T> left, Versioned<T> right)
+      protected T doApply(Versioned<T> left, Versioned<T> right)
       {
         logger.trace("Closest - left: {}, right: {}", left, right);
 
         Optional<Versioned<T>> leftClosest = left.getClosest(version);
+        //noinspection OptionalIsPresent
         if (!leftClosest.isPresent())
         {
           return null;
         }
 
         Optional<Versioned<T>> rightClosest = right.getClosest(version);
+        //noinspection OptionalIsPresent
         if (!rightClosest.isPresent())
         {
           return null;
@@ -51,7 +53,7 @@ public class Operators
     return new AbstractOperator<T, Versioned<T>, Versioned<T>>(OPERATOR_SYMBOL_LATEST, ((AbstractOperator<T, T, T>)operator).returnType)
     {
       @Override
-      public T apply(Versioned<T> left, Versioned<T> right)
+      protected T doApply(Versioned<T> left, Versioned<T> right)
       {
         logger.trace("Latest - left: {}, right: {}", left, right);
         return operator.apply(left.get(), right.get());
@@ -64,7 +66,7 @@ public class Operators
     return new AbstractOperator<T, Versioned<T>, T>(OPERATOR_SYMBOL_LATEST, ((AbstractOperator<T, T, T>)operator).returnType)
     {
       @Override
-      public T apply(Versioned<T> left, T right)
+      protected T doApply(Versioned<T> left, T right)
       {
         logger.trace("Latest - left: {}, right: {}", left, right);
         return operator.apply(left.get(), right);
@@ -77,7 +79,7 @@ public class Operators
     return new AbstractOperator<T, T, Versioned<T>>(OPERATOR_SYMBOL_LATEST, ((AbstractOperator<T, T, T>)operator).returnType)
     {
       @Override
-      public T apply(T left, Versioned<T> right)
+      protected T doApply(T left, Versioned<T> right)
       {
         logger.trace("Latest - left: {}, right: {}", left, right);
         return operator.apply(left, right.get());
@@ -90,7 +92,7 @@ public class Operators
     return new AbstractOperator<Number, Number, Number>(OPERATOR_SYMBOL_MULTIPLY, Number.class)
     {
       @Override
-      public Number apply(Number left, Number right)
+      protected Number doApply(Number left, Number right)
       {
         logger.trace("Multiply - left: {}, right: {}", left, right);
         return NumberUtils.multiply(left, right);
@@ -107,6 +109,17 @@ public class Operators
     {
       this.symbol = symbol;
       this.returnType = returnType;
+    }
+
+    @Override
+    public T apply(LT left, RT right)
+    {
+      if (left == null || right == null)
+      {
+        return null;
+      }
+
+      return doApply(left, right);
     }
 
     @Override
@@ -134,5 +147,7 @@ public class Operators
         .add("returnType", this.returnType)
         .toString();
     }
+
+    protected abstract T doApply(LT left, RT right);
   }
 }

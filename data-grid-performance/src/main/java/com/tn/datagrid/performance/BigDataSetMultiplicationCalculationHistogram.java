@@ -41,10 +41,7 @@ public class BigDataSetMultiplicationCalculationHistogram extends CalculationHis
   private static Logger logger = LoggerFactory.getLogger(BigDataSetMultiplicationCalculationHistogram.class);
 
   private Set<Identity> saleValueIdentities;
-  private IMap<Identity, Versioned<Integer>> productPrices;
-  private IMap<Identity, Versioned<Integer>> sales;
   private IMap<Identity, Versioned<String>> salesPeople;
-  private IMap<Identity, Integer> salesValues;
   private ValueGetter<Integer> salesValueGetter;
 
   public static void main(String[] args)
@@ -56,20 +53,18 @@ public class BigDataSetMultiplicationCalculationHistogram extends CalculationHis
   protected void setup(HazelcastInstance hazelcastInstance)
   {
     this.saleValueIdentities = new HashSet<>();
-    this.salesValues = hazelcastInstance.getMap(SALE_VALUES);
-    //this.salesValueQuery = hazelcastInstance.getDistributedObject(Query.SERVICE_NAME, SALE_VALUE_QUERY);
     this.salesValueGetter = new CalculatedValueCao<>(hazelcastInstance);
 
     Random random = new Random();
 
-    this.productPrices = hazelcastInstance.getMap(PRODUCT_PRICES);
+    IMap<Identity, Versioned<Integer>> productPrices = hazelcastInstance.getMap(PRODUCT_PRICES);
     populate(
-      this.productPrices,
+      productPrices,
       PRODUCT_COUNT,
       () -> random.nextInt((PRODUCT_MAX_PRICE - PRODUCT_MIN_PRICE) + 1) + PRODUCT_MIN_PRICE
     );
 
-    logger.info("Product prices setup: {}", this.productPrices.size());
+    logger.info("Product prices setup: {}", productPrices.size());
 
     this.salesPeople = hazelcastInstance.getMap(SALES_PEOPLE);
     populate(
@@ -81,13 +76,13 @@ public class BigDataSetMultiplicationCalculationHistogram extends CalculationHis
     logger.info("Sales people setup: {}", this.salesPeople.size());
 
     Map<Identity, Versioned<Integer>> salesBatch = new HashMap<>();
-    this.sales = hazelcastInstance.getMap(SALES);
+    IMap<Identity, Versioned<Integer>> sales = hazelcastInstance.getMap(SALES);
 
-    for (Identity productPriceIdentity : this.productPrices.keySet())
+    for (Identity productPriceIdentity : productPrices.keySet())
     {
       for (Identity salesPersonIdentity : this.salesPeople.keySet())
       {
-        Identity saleIdentity = new CompositeIdentity(SALES, this.productPrices.size() + 1, productPriceIdentity, salesPersonIdentity);
+        Identity saleIdentity = new CompositeIdentity(SALES, productPrices.size() + 1, productPriceIdentity, salesPersonIdentity);
 
         salesBatch.put(
           saleIdentity,
@@ -96,7 +91,7 @@ public class BigDataSetMultiplicationCalculationHistogram extends CalculationHis
 
         if (salesBatch.size() >= BATCH_SIZE)
         {
-          this.sales.putAll(salesBatch);
+          sales.putAll(salesBatch);
           salesBatch = new HashMap<>();
         }
 
@@ -104,9 +99,9 @@ public class BigDataSetMultiplicationCalculationHistogram extends CalculationHis
       }
     }
 
-    this.sales.putAll(salesBatch);
+    sales.putAll(salesBatch);
 
-    logger.info("Sales setup: {}", this.sales.size());
+    logger.info("Sales setup: {}", sales.size());
   }
 
   @Override
@@ -115,15 +110,8 @@ public class BigDataSetMultiplicationCalculationHistogram extends CalculationHis
     //this.salesValues.clear();
 
     long start = System.nanoTime();
-    //Map<Identity, Integer> results = this.salesValueQuery.getAll(this.saleValueIdentities);
-//    Map<Identity, Integer> results = this.salesValues.getAll(this.saleValueIdentities);
     Map<Identity, Integer> results = this.salesValueGetter.getAll(this.saleValueIdentities);
     recordValue(System.nanoTime() - start);
-
-    System.out.println("Local hits: productPrices - " + this.productPrices.getLocalMapStats().getNearCacheStats().getHits());
-    //System.out.println("Local hits: salesPeople - " + this.salesPeople.getLocalMapStats().getNearCacheStats().getHits());
-    System.out.println("Local hits: sales - " + this.sales.getLocalMapStats().getNearCacheStats().getHits());
-    //System.out.println("Local hits: salesValues - " + this.salesValues.getLocalMapStats().getNearCacheStats().getHits());
 
     if (results.size() != this.saleValueIdentities.size())
     {

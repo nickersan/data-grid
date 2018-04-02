@@ -104,8 +104,6 @@ public class CalculatorTask<T> implements Callable<Map<Identity, T>>, HazelcastI
     }
     else
     {
-      //TODO: handle missing primary value - Nick Holt 2018/3/22
-
       //noinspection unchecked
       value = (T1)knownValues.get(identity);
     }

@@ -1,13 +1,8 @@
 package com.tn.datagrid.performance;
 
 import java.io.PrintStream;
-import java.util.HashMap;
-import java.util.Map;
 
 import com.hazelcast.client.HazelcastClient;
-import com.hazelcast.client.config.ClientConfig;
-import com.hazelcast.config.InMemoryFormat;
-import com.hazelcast.config.NearCacheConfig;
 import com.hazelcast.core.HazelcastInstance;
 import org.HdrHistogram.Histogram;
 import org.slf4j.Logger;
@@ -17,9 +12,6 @@ public abstract class CalculationHistogram
 {
   protected static final String MAP_PRIMARY_INTEGERS = "primary.integers";
   protected static final String MAP_CALCULATED_INTEGERS = "calculated.integers";
-
-  private static final String PREFIX_MAP_PRIMARY = "primary.*";
-  private static final String PREFIX_MAP_CALCULATED = "calculated.*";
 
   private static final long WARMUP_TIME = 30000;
   private static final long RUN_TIME = 180000;
@@ -31,20 +23,7 @@ public abstract class CalculationHistogram
 
   public final void run(PrintStream out)
   {
-    NearCacheConfig primaryNearCacheConfig = new NearCacheConfig(PREFIX_MAP_PRIMARY);
-    primaryNearCacheConfig.setInMemoryFormat(InMemoryFormat.OBJECT);
-
-    NearCacheConfig calculatedNearCacheConfig = new NearCacheConfig(PREFIX_MAP_CALCULATED);
-    calculatedNearCacheConfig.setInMemoryFormat(InMemoryFormat.OBJECT);
-
-    Map<String, NearCacheConfig> nearCacheConfigs = new HashMap<>();
-    nearCacheConfigs.put(PREFIX_MAP_PRIMARY, primaryNearCacheConfig);
-    nearCacheConfigs.put(PREFIX_MAP_CALCULATED, calculatedNearCacheConfig);
-
-    ClientConfig clientConfig = new ClientConfig();
-    clientConfig.setNearCacheConfigMap(nearCacheConfigs);
-
-    HazelcastInstance hazelcastInstance = HazelcastClient.newHazelcastClient(clientConfig);
+    HazelcastInstance hazelcastInstance = HazelcastClient.newHazelcastClient();
 
     try
     {
