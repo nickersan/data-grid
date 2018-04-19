@@ -21,15 +21,15 @@ import org.slf4j.LoggerFactory;
 import com.tn.datagrid.core.domain.CalculatedIdentity;
 import com.tn.datagrid.core.domain.Identity;
 
-public class CalculatorTask<T> implements Callable<Map<Identity, T>>, HazelcastInstanceAware, Serializable
+public class QueryTask<T> implements Callable<Map<Identity, T>>, HazelcastInstanceAware, Serializable
 {
-  private static Logger logger = LoggerFactory.getLogger(CalculatorTask.class);
+  private static Logger logger = LoggerFactory.getLogger(QueryTask.class);
 
   private transient HazelcastInstance hazelcastInstance;
 
   private Collection<Identity> identities;
 
-  public CalculatorTask(Collection<Identity> identities)
+  public QueryTask(Collection<Identity> identities)
   {
     this.identities = identities;
   }
