@@ -14,11 +14,11 @@ public class VersionedTest
     Versioned<Integer> version2 = version1.update(3, 101);
     Versioned<Integer> version3 = version2.update(5, 102);
 
-    assertEquals(new Integer(102), version3.getClosest(10).orElseThrow(IllegalStateException::new).get());
-    assertEquals(new Integer(102), version3.getClosest(5).orElseThrow(IllegalStateException::new).get());
-    assertEquals(new Integer(101), version3.getClosest(4).orElseThrow(IllegalStateException::new).get());
-    assertEquals(new Integer(101), version3.getClosest(3).orElseThrow(IllegalStateException::new).get());
-    assertEquals(new Integer(100), version3.getClosest(2).orElseThrow(IllegalStateException::new).get());
+    assertEquals(Integer.valueOf(102), version3.getClosest(10).orElseThrow(IllegalStateException::new).get());
+    assertEquals(Integer.valueOf(102), version3.getClosest(5).orElseThrow(IllegalStateException::new).get());
+    assertEquals(Integer.valueOf(101), version3.getClosest(4).orElseThrow(IllegalStateException::new).get());
+    assertEquals(Integer.valueOf(101), version3.getClosest(3).orElseThrow(IllegalStateException::new).get());
+    assertEquals(Integer.valueOf(100), version3.getClosest(2).orElseThrow(IllegalStateException::new).get());
     assertFalse(version3.getClosest(1).isPresent());
   }
 }

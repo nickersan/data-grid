@@ -24,6 +24,12 @@
     <dependency>
       <groupId>com.tn.data-grid</groupId>
       <artifactId>data-grid-core</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>com.hazelcast</groupId>
+          <artifactId>hazelcast-client</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <dependency>
