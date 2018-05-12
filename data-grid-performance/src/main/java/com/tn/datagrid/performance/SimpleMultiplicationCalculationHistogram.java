@@ -37,7 +37,7 @@ public class SimpleMultiplicationCalculationHistogram extends CalculationHistogr
   protected void setup(HazelcastInstance hazelcastInstance)
   {
     this.calculatedIntegers = hazelcastInstance.getMap(MAP_CALCULATED_INTEGERS);
-    //this.calculatedValueGetter = new CalculatedValueCao<>(hazelcastInstance);
+    //this.calculatedValueGetter = new ValueCao<>(hazelcastInstance);
 
     IMap<Identity, Versioned<Integer>> primaryIntegers = hazelcastInstance.getMap(MAP_PRIMARY_INTEGERS);
     primaryIntegers.put(IDENTITY_A, VALUE_A);

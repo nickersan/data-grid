@@ -15,7 +15,7 @@ import com.hazelcast.core.IMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.tn.datagrid.cao.CalculatedValueCao;
+import com.tn.datagrid.cao.ValueCao;
 import com.tn.datagrid.cao.CaoException;
 import com.tn.datagrid.cao.ValueGetter;
 import com.tn.datagrid.core.domain.CalculatedIdentity;
@@ -53,7 +53,7 @@ public class BigDataSetMultiplicationCalculationHistogram extends CalculationHis
   protected void setup(HazelcastInstance hazelcastInstance)
   {
     this.saleValueIdentities = new HashSet<>();
-    this.salesValueGetter = new CalculatedValueCao<>(hazelcastInstance);
+    this.salesValueGetter = new ValueCao<>(hazelcastInstance);
 
     Random random = new Random();
 
