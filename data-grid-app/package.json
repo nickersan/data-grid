@@ -1,0 +1,42 @@
+{
+  "name": "data-grid-app",
+  "version": "1.0.0",
+  "description": "The application layer for Data-Grid",
+  "main": "index.js",
+  "typings": "index.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sahat/hackathon-starter.git"
+  },
+  "license": "MIT",
+  "scripts": {
+    "build": "npm run build-src && npm run build-index && npm run test",
+    "build-index": "tsc --declaration --outdir ./ ./index.ts",
+    "build-src": "tsc",
+    "test": "jest --forceExit",
+    "test-debug": "node-debug jest --runInBand"
+  },
+  "jest": {
+    "globals": {
+      "__TS_CONFIG__": "tsconfig.json"
+    },
+    "moduleFileExtensions": [
+      "ts",
+      "js"
+    ],
+    "transform": {
+      "^.+\\.(ts|tsx)$": "./node_modules/ts-jest/preprocessor.js"
+    },
+    "testMatch": [
+      "**/test/**/*.test.ts"
+    ],
+    "testEnvironment": "node"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "jest": "^22.4.3",
+    "jest-environment-node-debug": "^2.0.0",
+    "ts-jest": "^22.4.4",
+    "typescript": "^2.8.1"
+  }
+}
