@@ -129,16 +129,36 @@
 
     <plugins>
 
-       <plugin>
+       <!--<plugin>-->
+        <!--<groupId>org.apache.maven.plugins</groupId>-->
+        <!--<artifactId>maven-compiler-plugin</artifactId>-->
+        <!--<version>3.1</version>-->
+        <!--<configuration>-->
+          <!--<verbose>true</verbose>-->
+          <!--<fork>true</fork>-->
+          <!--<source>1.8</source>-->
+          <!--<target>1.8</target>-->
+        <!--</configuration>-->
+      <!--</plugin>-->
+
+      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.1</version>
+        <version>3.7.0</version>
         <configuration>
-          <verbose>true</verbose>
-          <fork>true</fork>
-          <source>1.8</source>
-          <target>1.8</target>
+          <source>10</source>
+          <target>10</target>
+          <release>10</release>
+          <executable>javac10</executable>
+          <encoding>UTF-8</encoding>
         </configuration>
+        <dependencies>
+          <dependency>
+            <groupId>org.ow2.asm</groupId>
+            <artifactId>asm</artifactId>
+            <version>6.1.1</version>
+          </dependency>
+        </dependencies>
       </plugin>
 
       <plugin>
