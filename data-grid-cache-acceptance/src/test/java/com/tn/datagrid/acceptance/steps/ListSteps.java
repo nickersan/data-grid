@@ -31,18 +31,17 @@ public class ListSteps extends AbstractSteps implements En
 
   private ReadWriteCao<Object> readWriteCao;
 
-  private Map<String, Identity> identities;
-
   public ListSteps(ReadWriteCao<Object> readWriteCao)
   {
     this.readWriteCao = readWriteCao;
-    this.identities = new HashMap<>();
 
     When("a new list called (\\S+) is created", this::listCreate);
     When("(\\S+) is added to the list (\\S+)", this::listAdd);
+    When("(\\S+) is updated to (\\S+)", this::update);
 
     Then("the list (\\S+) contains (.*)", this::assertListContains);
     Then("the list (\\S+) at version (\\d+) contains (.*)", this::assertListContainsAt);
+
     After(this::deleteLists);
   }
 
@@ -55,7 +54,7 @@ public class ListSteps extends AbstractSteps implements En
   {
     try
     {
-      Identity listIdentity = this.identities.get(listName);
+      Identity listIdentity = getIdentity(listName);
 
       if (listIdentity != null)
       {
@@ -80,11 +79,11 @@ public class ListSteps extends AbstractSteps implements En
   {
     try
     {
-      Identity listIdentity = this.identities.get(listName);
+      Identity listIdentity = getIdentity(listName);
 
       if (listIdentity != null)
       {
-        this.identities.put(value, readWriteCao.create(listIdentity, value));
+        setIdentity(value, readWriteCao.create(listIdentity, value));
       }
       else
       {
@@ -101,7 +100,7 @@ public class ListSteps extends AbstractSteps implements En
   {
     try
     {
-      this.identities.put(listName, readWriteCao.create(Locations.listsLocation(), new ListDefinition(listName)));
+      setIdentity(listName, readWriteCao.create(Locations.listsLocation(), new ListDefinition(listName)));
     }
     catch (CaoException e)
     {
@@ -109,8 +108,21 @@ public class ListSteps extends AbstractSteps implements En
     }
   }
 
+  private void update(String oldValue, String newValue)
+  {
+    try
+    {
+      readWriteCao.update(getIdentity(oldValue), newValue);
+    }
+    catch (CaoException e)
+    {
+      fail("Failed to update value: " + oldValue + ", to: " + newValue, e);
+    }
+  }
+
   private void deleteLists()
   {
-    this.identities.values().forEach((identity) -> readWriteCao.delete(identity, true));
+    getIdentities().forEach((identity) -> readWriteCao.delete(identity, true));
+    clearIdentities();
   }
 }

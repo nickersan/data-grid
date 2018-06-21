@@ -7,10 +7,10 @@ import org.junit.runner.RunWith;
 
 @RunWith(Cucumber.class)
 @CucumberOptions(
-  plugin = { "html:target/cucumber/ListCreateAndGet" },
-  features = { "classpath:features/lists/list_create_and_get.feature" },
+  plugin = { "html:target/cucumber/ListCreateUpdateAndGet" },
+  features = { "classpath:features/lists/list_create_update_and_get.feature" },
   glue = { "com.tn.datagrid.acceptance.steps" }
 )
-public class ListCreateAndGetTest
+public class ListCreateUpdateAndGetTest
 {
 }

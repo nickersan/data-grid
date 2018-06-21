@@ -12,6 +12,7 @@ import com.tn.datagrid.core.domain.identity.ChildIdentity;
 import com.tn.datagrid.core.domain.identity.Identity;
 import com.tn.datagrid.core.domain.identity.NumericIdentity;
 import com.tn.datagrid.core.processors.CreateProcessor;
+import com.tn.datagrid.core.processors.UpdateProcessor;
 
 public class ReadWriteCao<V> extends ReadOnlyCao<V> implements WriteCao<V>
 {
@@ -40,7 +41,10 @@ public class ReadWriteCao<V> extends ReadOnlyCao<V> implements WriteCao<V>
   @Override
   public void update(Identity identity, V value) throws CaoException
   {
-
+    if (!Boolean.TRUE.equals(getMap(identity.getLocation()).executeOnKey(identity, new UpdateProcessor<>(this.versionProvider.apply(identity.getLocation()), value))))
+    {
+      throw new CaoException("Failed to update entry: " + identity + " to: " + value);
+    }
   }
 
   @Override

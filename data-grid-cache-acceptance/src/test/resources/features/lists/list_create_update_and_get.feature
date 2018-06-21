@@ -11,3 +11,7 @@ Feature: List Create and Get
 
     Then the list people contains Nick, Sarah, Mia, Nina
     Then the list people at version 3 contains Nick, Sarah
+
+    When Nick is updated to Dad
+
+    Then the list people contains Dad, Sarah, Mia, Nina
