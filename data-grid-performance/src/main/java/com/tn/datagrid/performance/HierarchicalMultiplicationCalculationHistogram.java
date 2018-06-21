@@ -8,9 +8,9 @@ import static com.tn.datagrid.core.util.NumberUtils.multiply;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
 
-import com.tn.datagrid.core.domain.CalculatedIdentity;
-import com.tn.datagrid.core.domain.Identity;
-import com.tn.datagrid.core.domain.NumericIdentity;
+import com.tn.datagrid.core.domain.identity.CalculatedIdentity;
+import com.tn.datagrid.core.domain.identity.Identity;
+import com.tn.datagrid.core.domain.identity.NumericIdentity;
 import com.tn.datagrid.core.domain.Versioned;
 
 /**
@@ -37,9 +37,9 @@ public class HierarchicalMultiplicationCalculationHistogram extends CalculationH
   @Override
   protected void setup(HazelcastInstance hazelcastInstance)
   {
-    this.calculatedIntegers = hazelcastInstance.getMap(MAP_CALCULATED_INTEGERS);
+    this.calculatedIntegers = hazelcastInstance.getMap(MAP_CALCULATED_INTEGERS.getMapName());
 
-    IMap<Identity, Versioned<Integer>> primaryIntegers = hazelcastInstance.getMap(MAP_PRIMARY_INTEGERS);
+    IMap<Identity, Versioned<Integer>> primaryIntegers = hazelcastInstance.getMap(MAP_PRIMARY_INTEGERS.getMapName());
     primaryIntegers.put(IDENTITY_A, VALUE_A);
     primaryIntegers.put(IDENTITY_B, VALUE_B);
     primaryIntegers.put(IDENTITY_C, VALUE_C);

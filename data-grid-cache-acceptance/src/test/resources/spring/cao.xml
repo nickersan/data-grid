@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans
+  xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd"
+>
+
+  <bean id="idProvider" class="com.tn.datagrid.acceptance.utils.StaticIdProvider"/>
+
+  <bean id="readWriteCao" class="com.tn.datagrid.cao.ReadWriteCao">
+    <constructor-arg>
+      <bean class="com.tn.datagrid.core.util.SpringUtils" factory-method="asFunction">
+        <constructor-arg ref="hazelcastInstancePool"/>
+        <constructor-arg value="getHazelcastInstance"/>
+        <constructor-arg value="com.tn.datagrid.core.domain.Location"/>
+      </bean>
+    </constructor-arg>
+    <constructor-arg ref="idProvider"/>
+  </bean>
+
+</beans>

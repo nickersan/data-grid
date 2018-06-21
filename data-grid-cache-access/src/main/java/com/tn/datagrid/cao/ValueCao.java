@@ -12,12 +12,14 @@ import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IExecutorService;
 import com.hazelcast.core.Member;
 import com.hazelcast.core.PartitionService;
+import com.hazelcast.query.Predicate;
 
-import com.tn.datagrid.core.domain.Identity;
+import com.tn.datagrid.core.domain.Location;
+import com.tn.datagrid.core.domain.identity.Identity;
 import com.tn.datagrid.core.tasks.QueryTask;
 import com.tn.datagrid.core.util.ConcurrencyUtils;
 
-public class ValueCao<T> implements ValueGetter<T>
+public class ValueCao<T> implements ReadCao<T>
 {
   private static final String DEFAULT_EXECUTOR_SERVICE = "default";
 
@@ -39,6 +41,12 @@ public class ValueCao<T> implements ValueGetter<T>
   public Map<Identity, T> getAll(Collection<Identity> identities) throws CaoException
   {
     return getAllWithTask(identities);
+  }
+
+  @Override
+  public Map<Identity, T> getAll(Location location, Predicate<Identity, T> predicate) throws CaoException
+  {
+    return null;
   }
 
   private Map<Identity, T> getAllWithTask(Collection<Identity> identities) throws CaoException

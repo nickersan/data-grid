@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans
+  xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd"
+>
+
+  <bean id="hazelcastInstancePool" class="com.tn.datagrid.core.util.HazelcastInstancePool" destroy-method="shutdown">
+    <constructor-arg>
+      <bean class="com.tn.datagrid.core.util.SpringUtils" factory-method="asFunction">
+        <constructor-arg>
+          <bean class="com.tn.datagrid.core.util.HazelcastInstancePool.SingletonHazelcastInstanceProvider">
+            <constructor-arg>
+              <bean class="com.hazelcast.client.HazelcastClient" factory-method="newHazelcastClient"/>
+            </constructor-arg>
+          </bean>
+        </constructor-arg>
+        <constructor-arg value="getHazelcastInstance"/>
+        <constructor-arg value="com.tn.datagrid.core.domain.Location"/>
+      </bean>
+    </constructor-arg>
+  </bean>
+
+</beans>

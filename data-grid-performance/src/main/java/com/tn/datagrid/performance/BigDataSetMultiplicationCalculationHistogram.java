@@ -17,11 +17,12 @@ import org.slf4j.LoggerFactory;
 
 import com.tn.datagrid.cao.ValueCao;
 import com.tn.datagrid.cao.CaoException;
-import com.tn.datagrid.cao.ValueGetter;
-import com.tn.datagrid.core.domain.CalculatedIdentity;
-import com.tn.datagrid.core.domain.CompositeIdentity;
-import com.tn.datagrid.core.domain.Identity;
-import com.tn.datagrid.core.domain.NumericIdentity;
+import com.tn.datagrid.cao.ReadCao;
+import com.tn.datagrid.core.domain.Location;
+import com.tn.datagrid.core.domain.identity.CalculatedIdentity;
+import com.tn.datagrid.core.domain.identity.CompositeIdentity;
+import com.tn.datagrid.core.domain.identity.Identity;
+import com.tn.datagrid.core.domain.identity.NumericIdentity;
 import com.tn.datagrid.core.domain.Versioned;
 
 public class BigDataSetMultiplicationCalculationHistogram extends CalculationHistogram
@@ -31,10 +32,10 @@ public class BigDataSetMultiplicationCalculationHistogram extends CalculationHis
   private static final int PRODUCT_COUNT = 1000;
   private static final int PRODUCT_MAX_PRICE = 99;
   private static final int PRODUCT_MIN_PRICE = 49;
-  private static final String PRODUCT_PRICES = "primary.productPrices";
-  private static final String SALE_VALUES = "calculated.saleValueIdentities";
-  private static final String SALES = "primary.sales";
-  private static final String SALES_PEOPLE = "primary.salesPeople";
+  private static final Location PRODUCT_PRICES = new Location("primary.productPrices");
+  private static final Location SALE_VALUES = new Location("calculated.saleValueIdentities");
+  private static final Location SALES = new Location("primary.sales");
+  private static final Location SALES_PEOPLE = new Location("primary.salesPeople");
   private static final int SALES_PERSON_COUNT = 10;
   private static final String SALES_PERSON_PREFIX = "SP_";
 
@@ -42,7 +43,7 @@ public class BigDataSetMultiplicationCalculationHistogram extends CalculationHis
 
   private Set<Identity> saleValueIdentities;
   private IMap<Identity, Versioned<String>> salesPeople;
-  private ValueGetter<Integer> salesValueGetter;
+  private ReadCao<Integer> salesReadCao;
 
   public static void main(String[] args)
   {
@@ -53,11 +54,11 @@ public class BigDataSetMultiplicationCalculationHistogram extends CalculationHis
   protected void setup(HazelcastInstance hazelcastInstance)
   {
     this.saleValueIdentities = new HashSet<>();
-    this.salesValueGetter = new ValueCao<>(hazelcastInstance);
+    this.salesReadCao = new ValueCao<>(hazelcastInstance);
 
     Random random = new Random();
 
-    IMap<Identity, Versioned<Integer>> productPrices = hazelcastInstance.getMap(PRODUCT_PRICES);
+    IMap<Identity, Versioned<Integer>> productPrices = hazelcastInstance.getMap(PRODUCT_PRICES.getMapName());
     populate(
       productPrices,
       PRODUCT_COUNT,
@@ -66,7 +67,7 @@ public class BigDataSetMultiplicationCalculationHistogram extends CalculationHis
 
     logger.info("Product prices setup: {}", productPrices.size());
 
-    this.salesPeople = hazelcastInstance.getMap(SALES_PEOPLE);
+    this.salesPeople = hazelcastInstance.getMap(SALES_PEOPLE.getMapName());
     populate(
       this.salesPeople,
       SALES_PERSON_COUNT,
@@ -76,13 +77,13 @@ public class BigDataSetMultiplicationCalculationHistogram extends CalculationHis
     logger.info("Sales people setup: {}", this.salesPeople.size());
 
     Map<Identity, Versioned<Integer>> salesBatch = new HashMap<>();
-    IMap<Identity, Versioned<Integer>> sales = hazelcastInstance.getMap(SALES);
+    IMap<Identity, Versioned<Integer>> sales = hazelcastInstance.getMap(SALES.getMapName());
 
     for (Identity productPriceIdentity : productPrices.keySet())
     {
       for (Identity salesPersonIdentity : this.salesPeople.keySet())
       {
-        Identity saleIdentity = new CompositeIdentity(SALES, productPrices.size() + 1, productPriceIdentity, salesPersonIdentity);
+        Identity saleIdentity = new CompositeIdentity(SALES, productPriceIdentity, salesPersonIdentity);
 
         salesBatch.put(
           saleIdentity,
@@ -110,7 +111,7 @@ public class BigDataSetMultiplicationCalculationHistogram extends CalculationHis
     //this.salesValues.clear();
 
     long start = System.nanoTime();
-    Map<Identity, Integer> results = this.salesValueGetter.getAll(this.saleValueIdentities);
+    Map<Identity, Integer> results = this.salesReadCao.getAll(this.saleValueIdentities);
     recordValue(System.nanoTime() - start);
 
     if (results.size() != this.saleValueIdentities.size())
@@ -126,7 +127,7 @@ public class BigDataSetMultiplicationCalculationHistogram extends CalculationHis
     while (map.size() + batch.size() < size)
     {
       batch.put(
-        new NumericIdentity(map.getName(), map.size() + batch.size() + 1),
+        new NumericIdentity(new Location(map.getName()), map.size() + batch.size() + 1),
         new Versioned<>(INITIAL_VERSION, valueSupplier.get())
       );
 

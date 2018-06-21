@@ -1,14 +1,17 @@
-package com.tn.datagrid.core.domain;
+package com.tn.datagrid.core.domain.identity;
 
 import static com.google.common.base.MoreObjects.toStringHelper;
 
-public class CalculatedIdentity<T, LT, RT> extends Identity
+import com.tn.datagrid.core.domain.Location;
+import com.tn.datagrid.core.domain.Operator;
+
+public class CalculatedIdentity<T, LT, RT> extends AbstractIdentity
 {
   private Operator<T, LT, RT> operator;
   private Identity leftIdentity;
   private Identity rightIdentity;
 
-  public CalculatedIdentity(String location, Operator<T, LT, RT> operator, Identity leftIdentity, Identity rightIdentity)
+  public CalculatedIdentity(Location location, Operator<T, LT, RT> operator, Identity leftIdentity, Identity rightIdentity)
   {
     super(location);
     this.operator = operator;

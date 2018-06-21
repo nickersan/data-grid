@@ -18,8 +18,9 @@ import com.hazelcast.core.IMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.tn.datagrid.core.domain.CalculatedIdentity;
-import com.tn.datagrid.core.domain.Identity;
+import com.tn.datagrid.core.domain.Location;
+import com.tn.datagrid.core.domain.identity.CalculatedIdentity;
+import com.tn.datagrid.core.domain.identity.Identity;
 
 public class QueryTask<T> implements Callable<Map<Identity, T>>, HazelcastInstanceAware, Serializable
 {
@@ -51,19 +52,19 @@ public class QueryTask<T> implements Callable<Map<Identity, T>>, HazelcastInstan
   {
     Map<Identity, Object> knownValues = new ConcurrentHashMap<>();
 
-    Map<String, Set<Identity>> identitiesByLocation = new HashMap<>();
+    Map<Location, Set<Identity>> identitiesByLocation = new HashMap<>();
     identities.forEach((identity) -> groupIdentitiesByLocation(identity, identitiesByLocation));
 
-    for (Map.Entry<String, Set<Identity>> identitiesForLocation : identitiesByLocation.entrySet())
+    for (Map.Entry<Location, Set<Identity>> identitiesForLocation : identitiesByLocation.entrySet())
     {
-      IMap<Identity, Object> map = this.hazelcastInstance.getMap(identitiesForLocation.getKey());
+      IMap<Identity, Object> map = this.hazelcastInstance.getMap(identitiesForLocation.getKey().getMapName());
       knownValues.putAll(map.getAll(identitiesForLocation.getValue()));
     }
 
     return knownValues;
   }
 
-  private void groupIdentitiesByLocation(Identity identity, Map<String, Set<Identity>> identitiesByLocation)
+  private void groupIdentitiesByLocation(Identity identity, Map<Location, Set<Identity>> identitiesByLocation)
   {
     identitiesByLocation.computeIfAbsent(identity.getLocation(), (location) -> new HashSet<>()).add(identity);
 
@@ -99,7 +100,7 @@ public class QueryTask<T> implements Callable<Map<Identity, T>>, HazelcastInstan
         );
 
         knownValues.put(identity, value);
-        hazelcastInstance.getMap(identity.getLocation()).putAsync(identity, value);
+        hazelcastInstance.getMap(identity.getLocation().getMapName()).putAsync(identity, value);
       }
     }
     else

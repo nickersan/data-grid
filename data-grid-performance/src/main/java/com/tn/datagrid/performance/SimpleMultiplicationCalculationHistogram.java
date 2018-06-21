@@ -8,9 +8,9 @@ import static com.tn.datagrid.core.util.NumberUtils.multiply;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
 
-import com.tn.datagrid.core.domain.CalculatedIdentity;
-import com.tn.datagrid.core.domain.Identity;
-import com.tn.datagrid.core.domain.NumericIdentity;
+import com.tn.datagrid.core.domain.identity.CalculatedIdentity;
+import com.tn.datagrid.core.domain.identity.Identity;
+import com.tn.datagrid.core.domain.identity.NumericIdentity;
 import com.tn.datagrid.core.domain.Versioned;
 
 /**
@@ -26,7 +26,7 @@ public class SimpleMultiplicationCalculationHistogram extends CalculationHistogr
   private static final Versioned<Integer> VALUE_B = new Versioned<>(1, 7).update(3, 10);
 
   private IMap<Identity, Integer> calculatedIntegers;
-  //private ValueGetter<Number> calculatedValueGetter;
+  //private ReadCao<Number> calculatedValueGetter;
 
   public static void main(String[] args)
   {
@@ -36,10 +36,10 @@ public class SimpleMultiplicationCalculationHistogram extends CalculationHistogr
   @Override
   protected void setup(HazelcastInstance hazelcastInstance)
   {
-    this.calculatedIntegers = hazelcastInstance.getMap(MAP_CALCULATED_INTEGERS);
+    this.calculatedIntegers = hazelcastInstance.getMap(MAP_CALCULATED_INTEGERS.getMapName());
     //this.calculatedValueGetter = new ValueCao<>(hazelcastInstance);
 
-    IMap<Identity, Versioned<Integer>> primaryIntegers = hazelcastInstance.getMap(MAP_PRIMARY_INTEGERS);
+    IMap<Identity, Versioned<Integer>> primaryIntegers = hazelcastInstance.getMap(MAP_PRIMARY_INTEGERS.getMapName());
     primaryIntegers.put(IDENTITY_A, VALUE_A);
     primaryIntegers.put(IDENTITY_B, VALUE_B);
   }

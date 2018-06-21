@@ -8,10 +8,12 @@ import org.HdrHistogram.Histogram;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.tn.datagrid.core.domain.Location;
+
 public abstract class CalculationHistogram
 {
-  protected static final String MAP_PRIMARY_INTEGERS = "primary.integers";
-  protected static final String MAP_CALCULATED_INTEGERS = "calculated.integers";
+  protected static final Location MAP_PRIMARY_INTEGERS = new Location("primary.integers");
+  protected static final Location MAP_CALCULATED_INTEGERS = new Location("calculated.integers");
 
   private static final long WARMUP_TIME = 30000;
   private static final long RUN_TIME = 180000;

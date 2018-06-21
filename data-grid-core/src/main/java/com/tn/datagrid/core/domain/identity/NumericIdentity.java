@@ -1,16 +1,16 @@
-package com.tn.datagrid.core.domain;
+package com.tn.datagrid.core.domain.identity;
 
 import static com.google.common.base.MoreObjects.toStringHelper;
 
 import javax.annotation.Nonnull;
 
-import com.hazelcast.core.PartitionAware;
+import com.tn.datagrid.core.domain.Location;
 
-public class NumericIdentity extends Identity implements Comparable<NumericIdentity>
+public class NumericIdentity extends AbstractIdentity implements Comparable<NumericIdentity>
 {
   private int id;
 
-  public NumericIdentity(String location, int id)
+  public NumericIdentity(Location location, int id)
   {
     super(location);
     this.id = id;
