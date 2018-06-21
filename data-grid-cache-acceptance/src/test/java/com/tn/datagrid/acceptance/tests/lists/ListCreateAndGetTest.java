@@ -7,7 +7,7 @@ import org.junit.runner.RunWith;
 
 @RunWith(Cucumber.class)
 @CucumberOptions(
-  plugin = { "html:target/cucumber" },
+  plugin = { "html:target/cucumber/ListCreateAndGet" },
   features = { "classpath:features/lists/list_create_and_get.feature" },
   glue = { "com.tn.datagrid.acceptance.steps" }
 )

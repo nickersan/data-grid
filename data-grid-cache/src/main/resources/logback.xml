@@ -15,7 +15,7 @@
     <!--</encoder>-->
   <!--</appender>-->
 
-  <logger name="com.tn.datagrid.cache.services.GetAllOperation" level="DEBUG"/>
+  <logger name="com.tn.datagrid" level="DEBUG"/>
 
   <root level="INFO">
     <appender-ref ref="STDOUT"/>

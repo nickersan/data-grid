@@ -6,7 +6,8 @@
   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd"
 >
 
-  <bean id="idProvider" class="com.tn.datagrid.acceptance.utils.StaticIdProvider"/>
+  <bean id="idProvider" class="com.tn.datagrid.acceptance.utils.StaticIntProvider"/>
+  <bean id="versionProvider" class="com.tn.datagrid.acceptance.utils.StaticIntProvider"/>
 
   <bean id="readWriteCao" class="com.tn.datagrid.cao.ReadWriteCao">
     <constructor-arg>
@@ -17,6 +18,7 @@
       </bean>
     </constructor-arg>
     <constructor-arg ref="idProvider"/>
+    <constructor-arg ref="versionProvider"/>
   </bean>
 
 </beans>

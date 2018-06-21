@@ -9,6 +9,7 @@
 
   <properties>
     <property name="hazelcast.jmx">true</property>
+    <property name="hazelcast.logging.type">slf4j</property>
 
     <!-- 1 thread per partition to avoid deadlock when loading values for calculations -->
     <!--<property name="hazelcast.partition.count">271</property>-->

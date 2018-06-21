@@ -7,7 +7,7 @@ import java.util.function.Function;
 
 import com.tn.datagrid.core.domain.Location;
 
-public class StaticIdProvider implements Function<Location, Integer>
+public class StaticIntProvider implements Function<Location, Integer>
 {
   private Map<Location, AtomicInteger> ids = new HashMap<>();
 
