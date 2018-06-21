@@ -7,6 +7,7 @@ import com.hazelcast.core.HazelcastInstance;
 
 import com.tn.datagrid.core.domain.Location;
 import com.tn.datagrid.core.domain.Pair;
+import com.tn.datagrid.core.domain.Versioned;
 import com.tn.datagrid.core.domain.identity.ChildIdentity;
 import com.tn.datagrid.core.domain.identity.Identity;
 import com.tn.datagrid.core.domain.identity.NumericIdentity;
@@ -47,8 +48,8 @@ public class ReadWriteCao<V> extends ReadOnlyCao<V> implements WriteCao<V>
   {
     //TODO: implement soft delete
 
-    V value = getMap(identity).remove(identity);
-    return value != null ? Optional.of(new Pair<>(identity, value)) : Optional.empty();
+    Versioned<V> value = getMap(identity).remove(identity);
+    return value != null ? Optional.of(new Pair<>(identity, value.get())) : Optional.empty();
   }
 
   private Identity doCreate(Identity identity, V value) throws CaoException

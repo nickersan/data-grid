@@ -47,7 +47,7 @@ public class Versioned<T> implements Serializable
     }
     else
     {
-      throw new IllegalArgumentException("Version must be later than current version");
+      throw new IllegalArgumentException("At must be later than current version");
     }
   }
 }

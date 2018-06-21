@@ -18,22 +18,12 @@ public class AbstractCao<V>
     this.hazelcastInstanceProvider = hazelcastInstanceProvider;
   }
 
-  protected IMap<Identity, V> getMap(Identity identity)
+  protected IMap<Identity, Versioned<V>> getMap(Identity identity)
   {
     return this.getMap(identity.getLocation());
   }
 
-  protected IMap<Identity, V> getMap(Location location)
-  {
-    return this.hazelcastInstanceProvider.apply(location).getMap(location.getMapName());
-  }
-
-  protected IMap<Identity, Versioned<V>> getVersionedMap(Identity identity)
-  {
-    return this.getVersionedMap(identity.getLocation());
-  }
-
-  protected IMap<Identity, Versioned<V>> getVersionedMap(Location location)
+  protected IMap<Identity, Versioned<V>> getMap(Location location)
   {
     return this.hazelcastInstanceProvider.apply(location).getMap(location.getMapName());
   }

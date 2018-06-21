@@ -22,7 +22,7 @@ public class Operators
 
   public static <T> Operator<T, Versioned<T>, Versioned<T>> closest(Operator<T, T, T> operator, int version)
   {
-    return new AbstractOperator<T, Versioned<T>, Versioned<T>>(format(FORMAT_VERSIONED_OPERATOR_SYMBOL, version), ((AbstractOperator<T, T, T>)operator).returnType)
+    return new AbstractOperator<>(format(FORMAT_VERSIONED_OPERATOR_SYMBOL, version), ((AbstractOperator<T, T, T>)operator).returnType)
     {
       @Override
       protected T doApply(Versioned<T> left, Versioned<T> right)
@@ -50,7 +50,7 @@ public class Operators
 
   public static <T> Operator<T, Versioned<T>, Versioned<T>> latest(Operator<T, T, T> operator)
   {
-    return new AbstractOperator<T, Versioned<T>, Versioned<T>>(OPERATOR_SYMBOL_LATEST, ((AbstractOperator<T, T, T>)operator).returnType)
+    return new AbstractOperator<>(OPERATOR_SYMBOL_LATEST, ((AbstractOperator<T, T, T>)operator).returnType)
     {
       @Override
       protected T doApply(Versioned<T> left, Versioned<T> right)
@@ -63,7 +63,7 @@ public class Operators
 
   public static <T> Operator<T, Versioned<T>, T> latestLeft(Operator<T, T, T> operator)
   {
-    return new AbstractOperator<T, Versioned<T>, T>(OPERATOR_SYMBOL_LATEST, ((AbstractOperator<T, T, T>)operator).returnType)
+    return new AbstractOperator<>(OPERATOR_SYMBOL_LATEST, ((AbstractOperator<T, T, T>)operator).returnType)
     {
       @Override
       protected T doApply(Versioned<T> left, T right)
@@ -76,7 +76,7 @@ public class Operators
 
   public static <T> Operator<T, T, Versioned<T>> latestRight(Operator<T, T, T> operator)
   {
-    return new AbstractOperator<T, T, Versioned<T>>(OPERATOR_SYMBOL_LATEST, ((AbstractOperator<T, T, T>)operator).returnType)
+    return new AbstractOperator<>(OPERATOR_SYMBOL_LATEST, ((AbstractOperator<T, T, T>)operator).returnType)
     {
       @Override
       protected T doApply(T left, Versioned<T> right)
@@ -89,7 +89,7 @@ public class Operators
 
   public static Operator<Number, Number, Number> multiply()
   {
-    return new AbstractOperator<Number, Number, Number>(OPERATOR_SYMBOL_MULTIPLY, Number.class)
+    return new AbstractOperator<>(OPERATOR_SYMBOL_MULTIPLY, Number.class)
     {
       @Override
       protected Number doApply(Number left, Number right)

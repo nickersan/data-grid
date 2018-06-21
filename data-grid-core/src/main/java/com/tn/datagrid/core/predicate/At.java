@@ -9,27 +9,27 @@ import com.hazelcast.query.Predicate;
 import com.tn.datagrid.core.domain.Versioned;
 import com.tn.datagrid.core.domain.identity.Identity;
 
-public class Version<V> implements Predicate<Identity, Versioned<V>>
+public class At<V> implements Predicate<Identity, Versioned<V>>
 {
   private int version;
   private Predicate<Identity, V> predicate;
 
-  public Version()
+  public At()
   {
     this(Integer.MAX_VALUE);
   }
 
-  public Version(int version)
+  public At(int version)
   {
-    this(version, null);
+    this(null, version);
   }
 
-  public Version(Predicate<Identity, V> predicate)
+  public At(Predicate<Identity, V> predicate)
   {
-    this(Integer.MAX_VALUE, predicate);
+    this(predicate, Integer.MAX_VALUE);
   }
 
-  public Version(int version, Predicate<Identity, V> predicate)
+  public At(Predicate<Identity, V> predicate, int version)
   {
     this.version = version;
     this.predicate = predicate;

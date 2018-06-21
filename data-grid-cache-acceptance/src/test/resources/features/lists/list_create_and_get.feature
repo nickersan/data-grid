@@ -10,3 +10,4 @@ Feature: List Create and Get
     When Nina is added to the list people
 
     Then the list people contains Nick, Sarah, Mia, Nina
+    Then the list people at version 3 contains Nick, Sarah

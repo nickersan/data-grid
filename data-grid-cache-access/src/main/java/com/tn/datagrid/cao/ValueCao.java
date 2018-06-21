@@ -44,7 +44,19 @@ public class ValueCao<T> implements ReadCao<T>
   }
 
   @Override
+  public Map<Identity, T> getAllAt(Collection<Identity> identities, int version) throws CaoException
+  {
+    return null;
+  }
+
+  @Override
   public Map<Identity, T> getAll(Location location, Predicate<Identity, T> predicate) throws CaoException
+  {
+    return null;
+  }
+
+  @Override
+  public Map<Identity, T> getAllAt(Location location, Predicate<Identity, T> predicate, int version) throws CaoException
   {
     return null;
   }

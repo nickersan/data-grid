@@ -15,10 +15,25 @@ public interface ReadCao<V>
 {
   default Optional<V> get(Identity identity) throws CaoException
   {
-    return getAll(singleton(identity)).values().stream().findFirst();
+    return this.getAll(singleton(identity)).values().stream().findFirst();
   }
 
-  Map<Identity, V> getAll(Collection<Identity> identities) throws CaoException;
+  default Optional<V> getAt(Identity identity, int version) throws CaoException
+  {
+    return this.getAllAt(singleton(identity), version).values().stream().findFirst();
+  }
 
-  Map<Identity, V> getAll(Location location, Predicate<Identity, V> predicate) throws CaoException;
+  default Map<Identity, V> getAll(Collection<Identity> identities) throws CaoException
+  {
+    return this.getAllAt(identities, Integer.MAX_VALUE);
+  }
+
+  Map<Identity, V> getAllAt(Collection<Identity> identities, int  version) throws CaoException;
+
+  default Map<Identity, V> getAll(Location location, Predicate<Identity, V> predicate) throws CaoException
+  {
+    return this.getAllAt(location, predicate, Integer.MAX_VALUE);
+  }
+
+  Map<Identity, V> getAllAt(Location location, Predicate<Identity, V> predicate, int version) throws CaoException;
 }
