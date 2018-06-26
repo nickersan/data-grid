@@ -19,7 +19,13 @@ public class ChildIdentity extends NumericIdentity
 
   public boolean isChild(Identity parentIdentity)
   {
-    return this.parentIdentity.equals(parentIdentity);
+    return isChild(parentIdentity, false);
+  }
+
+  public boolean isChild(Identity parentIdentity, boolean recursive)
+  {
+    return this.parentIdentity.equals(parentIdentity) ||
+      (recursive && this.parentIdentity instanceof ChildIdentity && ((ChildIdentity)this.parentIdentity).isChild(parentIdentity, true));
   }
 
   @Override

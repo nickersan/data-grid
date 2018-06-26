@@ -1,5 +1,5 @@
-Feature: List Create and Get
-  Tests creating a basic flat list and getting that list
+Feature: List Create, Update and Get
+  Tests creating and updating a basic flat list and getting that list
 
   Scenario:
 

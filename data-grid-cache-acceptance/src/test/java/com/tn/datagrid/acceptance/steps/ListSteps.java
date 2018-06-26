@@ -39,10 +39,36 @@ public class ListSteps extends AbstractSteps implements En
     When("(\\S+) is added to the list (\\S+)", this::listAdd);
     When("(\\S+) is updated to (\\S+)", this::update);
 
+    Then("the flattened list (\\S+) contains (.*)", this::assertFlattenedListContains);
     Then("the list (\\S+) contains (.*)", this::assertListContains);
     Then("the list (\\S+) at version (\\d+) contains (.*)", this::assertListContainsAt);
 
     After(this::deleteLists);
+  }
+
+  private void assertFlattenedListContains(String listName, String itemsStr)
+  {
+    try
+    {
+      Identity listIdentity = getIdentity(listName);
+
+      if (listIdentity != null)
+      {
+        Map<Identity, Object> children = this.readWriteCao.getAll(listIdentity.getLocation(), new ChildOf<>(listIdentity, true));
+        Collection<String> items = Stream.of(itemsStr.split(COMMA)).map(String::trim).collect(toSet());
+
+        assertEquals(items.size(), children.size());
+        assertEquals(items, Set.copyOf(children.values()));
+      }
+      else
+      {
+        fail("List does not exist: " + listName);
+      }
+    }
+    catch (CaoException e)
+    {
+      fail("Failed to get list content: " + listName, e);
+    }
   }
 
   private void assertListContains(String listName, String itemsStr)
