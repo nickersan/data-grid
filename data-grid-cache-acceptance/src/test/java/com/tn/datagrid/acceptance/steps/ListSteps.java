@@ -4,31 +4,24 @@ import static java.util.stream.Collectors.toSet;
 
 import static org.junit.Assert.assertEquals;
 
+import static com.tn.datagrid.core.predicate.Predicates.*;
 import static com.tn.datagrid.core.util.StringUtils.COMMA;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Stream;
 
 import cucumber.api.java8.En;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.test.context.ContextConfiguration;
 
 import com.tn.datagrid.cao.CaoException;
 import com.tn.datagrid.cao.ReadWriteCao;
 import com.tn.datagrid.core.domain.ListDefinition;
 import com.tn.datagrid.core.domain.Locations;
 import com.tn.datagrid.core.domain.identity.Identity;
-import com.tn.datagrid.core.predicate.ChildOf;
 
-@ContextConfiguration("classpath:cucumber.xml")
 public class ListSteps extends AbstractSteps implements En
 {
-  private static Logger logger = LoggerFactory.getLogger(ListSteps.class);
-
   private ReadWriteCao<Object> readWriteCao;
 
   public ListSteps(ReadWriteCao<Object> readWriteCao)
@@ -54,7 +47,7 @@ public class ListSteps extends AbstractSteps implements En
 
       if (listIdentity != null)
       {
-        Map<Identity, Object> children = this.readWriteCao.getAll(listIdentity.getLocation(), new ChildOf<>(listIdentity, true));
+        Map<Identity, Object> children = this.readWriteCao.getAll(listIdentity.getLocation(), childOf(listIdentity, true));
         Collection<String> items = Stream.of(itemsStr.split(COMMA)).map(String::trim).collect(toSet());
 
         assertEquals(items.size(), children.size());
@@ -84,7 +77,7 @@ public class ListSteps extends AbstractSteps implements En
 
       if (listIdentity != null)
       {
-        Map<Identity, Object> children = this.readWriteCao.getAllAt(listIdentity.getLocation(), new ChildOf<>(listIdentity), version);
+        Map<Identity, Object> children = this.readWriteCao.getAllAt(listIdentity.getLocation(), childOf(listIdentity), version);
         Collection<String> items = Stream.of(itemsStr.split(COMMA)).map(String::trim).collect(toSet());
 
         assertEquals(items.size(), children.size());

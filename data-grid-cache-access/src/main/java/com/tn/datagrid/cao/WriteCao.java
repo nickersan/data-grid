@@ -1,5 +1,6 @@
 package com.tn.datagrid.cao;
 
+import java.util.Collection;
 import java.util.Optional;
 
 import com.tn.datagrid.core.domain.Location;
@@ -11,6 +12,8 @@ public interface WriteCao<V>
   Identity create(Location location, V value) throws CaoException;
 
   Identity create(Identity parentIdentity, V value) throws CaoException;
+
+  Identity create(Location location, Collection<Identity> identities, V value) throws CaoException;
 
   void update(Identity identity, V value) throws CaoException;
 

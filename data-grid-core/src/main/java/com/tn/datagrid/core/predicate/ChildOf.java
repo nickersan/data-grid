@@ -1,5 +1,7 @@
 package com.tn.datagrid.core.predicate;
 
+import static com.google.common.base.MoreObjects.toStringHelper;
+
 import java.util.Map;
 
 import com.hazelcast.query.Predicate;
@@ -27,5 +29,14 @@ public class ChildOf<V> implements Predicate<Identity, V>
   public boolean apply(Map.Entry<Identity, V> entry)
   {
     return entry.getKey() instanceof ChildIdentity && ((ChildIdentity)entry.getKey()).isChild(this.parentIdentity, this.recursive);
+  }
+
+  @Override
+  public String toString()
+  {
+    return toStringHelper(this)
+      .add("parentIdentity", this.parentIdentity)
+      .add("recursive", this.recursive)
+      .toString();
   }
 }

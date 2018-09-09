@@ -1,5 +1,7 @@
 package com.tn.datagrid.core.predicate;
 
+import static com.google.common.base.MoreObjects.toStringHelper;
+
 import java.util.AbstractMap;
 import java.util.Map;
 import java.util.Optional;
@@ -40,5 +42,14 @@ public class At<V> implements Predicate<Identity, Versioned<V>>
   {
     Optional<Versioned<V>> closest = entry.getValue().getClosest(this.version);
     return closest.isPresent() && (predicate == null || predicate.apply(new AbstractMap.SimpleEntry<>(entry.getKey(), closest.get().get())));
+  }
+
+  @Override
+  public String toString()
+  {
+    return toStringHelper(this)
+      .add("version", this.version)
+      .add("predicate", this.predicate)
+      .toString();
   }
 }

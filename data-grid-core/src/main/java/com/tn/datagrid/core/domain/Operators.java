@@ -1,11 +1,14 @@
 package com.tn.datagrid.core.domain;
 
-import static java.lang.String.*;
+import static java.lang.String.format;
 
 import static com.google.common.base.MoreObjects.toStringHelper;
 
 import java.io.Serializable;
+import java.util.Collection;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,10 +22,11 @@ public class Operators
   private static final String FORMAT_VERSIONED_OPERATOR_SYMBOL = "@{%d}";
   private static final String OPERATOR_SYMBOL_LATEST = "@latest";
   private static final String OPERATOR_SYMBOL_MULTIPLY = "*";
+  private static final String OPERATOR_SYMBOL_SUM = "SUM";
 
-  public static <T> Operator<T, Versioned<T>, Versioned<T>> closest(Operator<T, T, T> operator, int version)
+  public static <T> BiOperator<T, Versioned<T>, Versioned<T>> closest(BiOperator<T, T, T> operator, int version)
   {
-    return new AbstractOperator<>(format(FORMAT_VERSIONED_OPERATOR_SYMBOL, version), ((AbstractOperator<T, T, T>)operator).returnType)
+    return new AbstractBiOperator<>(format(FORMAT_VERSIONED_OPERATOR_SYMBOL, version), ((AbstractBiOperator<T, T, T>)operator).getReturnType())
     {
       @Override
       protected T doApply(Versioned<T> left, Versioned<T> right)
@@ -48,9 +52,9 @@ public class Operators
     };
   }
 
-  public static <T> Operator<T, Versioned<T>, Versioned<T>> latest(Operator<T, T, T> operator)
+  public static <T> BiOperator<T, Versioned<T>, Versioned<T>> latest(BiOperator<T, T, T> operator)
   {
-    return new AbstractOperator<>(OPERATOR_SYMBOL_LATEST, ((AbstractOperator<T, T, T>)operator).returnType)
+    return new AbstractBiOperator<>(OPERATOR_SYMBOL_LATEST, ((AbstractBiOperator<T, T, T>)operator).getReturnType())
     {
       @Override
       protected T doApply(Versioned<T> left, Versioned<T> right)
@@ -61,9 +65,9 @@ public class Operators
     };
   }
 
-  public static <T> Operator<T, Versioned<T>, T> latestLeft(Operator<T, T, T> operator)
+  public static <T> BiOperator<T, Versioned<T>, T> latestLeft(BiOperator<T, T, T> operator)
   {
-    return new AbstractOperator<>(OPERATOR_SYMBOL_LATEST, ((AbstractOperator<T, T, T>)operator).returnType)
+    return new AbstractBiOperator<>(OPERATOR_SYMBOL_LATEST, ((AbstractBiOperator<T, T, T>)operator).getReturnType())
     {
       @Override
       protected T doApply(Versioned<T> left, T right)
@@ -74,9 +78,9 @@ public class Operators
     };
   }
 
-  public static <T> Operator<T, T, Versioned<T>> latestRight(Operator<T, T, T> operator)
+  public static <T> BiOperator<T, T, Versioned<T>> latestRight(BiOperator<T, T, T> operator)
   {
-    return new AbstractOperator<>(OPERATOR_SYMBOL_LATEST, ((AbstractOperator<T, T, T>)operator).returnType)
+    return new AbstractBiOperator<>(OPERATOR_SYMBOL_LATEST, ((AbstractBiOperator<T, T, T>)operator).getReturnType())
     {
       @Override
       protected T doApply(T left, Versioned<T> right)
@@ -87,9 +91,9 @@ public class Operators
     };
   }
 
-  public static Operator<Number, Number, Number> multiply()
+  public static BiOperator<Number, Number, Number> multiply()
   {
-    return new AbstractOperator<>(OPERATOR_SYMBOL_MULTIPLY, Number.class)
+    return new AbstractBiOperator<>(OPERATOR_SYMBOL_MULTIPLY, Number.class)
     {
       @Override
       protected Number doApply(Number left, Number right)
@@ -100,15 +104,39 @@ public class Operators
     };
   }
 
-  private abstract static class AbstractOperator<T, LT, RT> implements Operator<T, LT, RT>, Serializable
+  public static AggregateOperator<Number> sum()
   {
-    private String symbol;
-    private Class<T> returnType;
-
-    public AbstractOperator(String symbol, Class<T> returnType)
+    return new AbstractAggregateOperator<>(OPERATOR_SYMBOL_SUM, Number.class)
     {
-      this.symbol = symbol;
-      this.returnType = returnType;
+      @Override
+      protected Number doApply(Stream<Number> values)
+      {
+        return values.reduce(NumberUtils::add).orElse(0);
+      }
+    };
+  }
+
+  private abstract static class AbstractAggregateOperator<T> extends AbstractOperator<T> implements AggregateOperator<T>
+  {
+    public AbstractAggregateOperator(String symbol, Class<T> returnType)
+    {
+      super(symbol, returnType);
+    }
+
+    @Override
+    public T apply(Collection<T> values)
+    {
+      return doApply(values.stream().filter(Objects::nonNull));
+    }
+
+    protected abstract T doApply(Stream<T> values);
+  }
+
+  private abstract static class AbstractBiOperator<T, LT, RT> extends AbstractOperator<T> implements BiOperator<T, LT, RT>
+  {
+    public AbstractBiOperator(String symbol, Class<T> returnType)
+    {
+      super(symbol, returnType);
     }
 
     @Override
@@ -120,6 +148,30 @@ public class Operators
       }
 
       return doApply(left, right);
+    }
+
+    protected abstract T doApply(LT left, RT right);
+  }
+
+  private abstract static class AbstractOperator<T> implements Serializable
+  {
+    private String symbol;
+    private Class<T> returnType;
+
+    public AbstractOperator(String symbol, Class<T> returnType)
+    {
+      this.symbol = symbol;
+      this.returnType = returnType;
+    }
+
+    public Class<T> getReturnType()
+    {
+      return returnType;
+    }
+
+    public String getSymbol()
+    {
+      return symbol;
     }
 
     @Override
@@ -147,7 +199,5 @@ public class Operators
         .add("returnType", this.returnType)
         .toString();
     }
-
-    protected abstract T doApply(LT left, RT right);
   }
 }

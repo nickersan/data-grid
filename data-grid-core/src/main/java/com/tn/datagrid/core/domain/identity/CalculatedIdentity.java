@@ -3,15 +3,15 @@ package com.tn.datagrid.core.domain.identity;
 import static com.google.common.base.MoreObjects.toStringHelper;
 
 import com.tn.datagrid.core.domain.Location;
-import com.tn.datagrid.core.domain.Operator;
+import com.tn.datagrid.core.domain.BiOperator;
 
 public class CalculatedIdentity<T, LT, RT> extends AbstractIdentity
 {
-  private Operator<T, LT, RT> operator;
+  private BiOperator<T, LT, RT> operator;
   private Identity leftIdentity;
   private Identity rightIdentity;
 
-  public CalculatedIdentity(Location location, Operator<T, LT, RT> operator, Identity leftIdentity, Identity rightIdentity)
+  public CalculatedIdentity(Location location, BiOperator<T, LT, RT> operator, Identity leftIdentity, Identity rightIdentity)
   {
     super(location);
     this.operator = operator;
@@ -24,7 +24,7 @@ public class CalculatedIdentity<T, LT, RT> extends AbstractIdentity
     return this.leftIdentity;
   }
 
-  public Operator<T, LT, RT> getOperator()
+  public BiOperator<T, LT, RT> getOperator()
   {
     return this.operator;
   }
@@ -57,8 +57,8 @@ public class CalculatedIdentity<T, LT, RT> extends AbstractIdentity
   public String toString()
   {
     return toStringHelper(this)
-      .add("leftIdentity", this.leftIdentity)
       .add("operator", this.operator)
+      .add("leftIdentity", this.leftIdentity)
       .add("rightIdentity", this.rightIdentity)
       .toString();
   }

@@ -1,4 +1,4 @@
-package com.tn.datagrid.acceptance.tests;
+package com.tn.datagrid.acceptance.tests.big3;
 
 import cucumber.api.CucumberOptions;
 import cucumber.api.junit.Cucumber;
@@ -7,11 +7,11 @@ import org.springframework.test.context.ContextConfiguration;
 
 @RunWith(Cucumber.class)
 @CucumberOptions(
-  plugin = { "html:target/cucumber/TreeCreateUpdateAndGet" },
-  features = { "classpath:features/tree_create_update_and_get.feature" },
+  plugin = { "html:target/cucumber/Case1DimensionalityChanges" },
+  features = { "classpath:features/big-3/case-1-dimensionality-changes.feature" },
   glue = { "com.tn.datagrid.acceptance.steps" }
 )
 @ContextConfiguration("classpath:cucumber.xml")
-public class TreeCreateUpdateAndGetTest
+public class Case1DimensionalityChangesTest
 {
 }

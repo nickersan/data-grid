@@ -1,5 +1,6 @@
 package com.tn.datagrid.cao;
 
+import java.util.Collection;
 import java.util.Optional;
 import java.util.function.Function;
 
@@ -9,6 +10,7 @@ import com.tn.datagrid.core.domain.Location;
 import com.tn.datagrid.core.domain.Pair;
 import com.tn.datagrid.core.domain.Versioned;
 import com.tn.datagrid.core.domain.identity.ChildIdentity;
+import com.tn.datagrid.core.domain.identity.CompositeIdentity;
 import com.tn.datagrid.core.domain.identity.Identity;
 import com.tn.datagrid.core.domain.identity.NumericIdentity;
 import com.tn.datagrid.core.processors.CreateProcessor;
@@ -36,6 +38,12 @@ public class ReadWriteCao<V> extends ReadOnlyCao<V> implements WriteCao<V>
   public Identity create(Identity parentIdentity, V value) throws CaoException
   {
     return doCreate(new ChildIdentity(parentIdentity, idProvider.apply(parentIdentity.getLocation())), value);
+  }
+
+  @Override
+  public Identity create(Location location, Collection<Identity> identities, V value) throws CaoException
+  {
+    return doCreate(new CompositeIdentity(location, identities), value);
   }
 
   @Override

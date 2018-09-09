@@ -4,18 +4,11 @@ import static com.google.common.base.MoreObjects.toStringHelper;
 
 import java.io.Serializable;
 
-public class ListDefinition implements Serializable
+public class ListDefinition extends Definition
 {
-  private String name;
-
   public ListDefinition(String name)
   {
-    this.name = name;
-  }
-
-  public String getName()
-  {
-    return name;
+    super(name);
   }
 
   @Override
