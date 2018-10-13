@@ -5,11 +5,34 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
 
 public class GridTest
 {
+  @Test
+  public void testAggregateColumns()
+  {
+    Grid<String, String> grid = new Grid<>(List.of("A", "B", "C"), List.of("1", "2"));
+
+    assertEquals(
+      new Grid<>(List.of("ABC", "A", "B", "C"), List.of("1", "2")),
+      grid.aggregateColumns(Collectors.joining())
+    );
+  }
+
+  @Test
+  public void testAggregateRows()
+  {
+    Grid<String, String> grid = new Grid<>(List.of("A", "B", "C"), List.of("1", "2"));
+
+    assertEquals(
+      new Grid<>(List.of("A", "B", "C"), List.of("12", "1", "2")),
+      grid.aggregateRows(Collectors.joining())
+    );
+  }
+
   @Test
   public void testColumns()
   {
@@ -47,10 +70,11 @@ public class GridTest
     Grid<String, String> grid2 = new Grid<>(List.of("D", "E", "F"), List.of("1", "2"));
     Grid<String, String> grid3 = new Grid<>(List.of("G", "H", "I"), List.of("1", "2"));
 
-    assertEquals(
-      new Grid<>(List.of("G1", "A", "B", "C", "G2", "D", "E", "F", "G3", "G", "H", "I"), List.of("1", "2")),
-      grid1.as("G1").joinRight("G2", grid2).joinRight("G3", grid3).grid()
-    );
+
+//    assertEquals(
+//      new Grid<>(List.of("GT", "G1", "A", "B", "C", "G2", "D", "E", "F", "G3", "G", "H", "I"), List.of("1", "2")),
+//      grid1.joinRight("G1").add("G2", grid2).add("G3", grid3).grid("GT")
+//    );
   }
 
   @Test
@@ -75,7 +99,7 @@ public class GridTest
 
     assertEquals(
       expectedCells,
-      grid.getOrigin(Grid.AggregateDirection.HORIZONTAL)
+      grid.getOrigin(Grid.OriginDirection.HORIZONTAL)
     );
   }
 
@@ -95,7 +119,7 @@ public class GridTest
 
     assertEquals(
       expectedCells,
-      grid.getOrigin(Grid.AggregateDirection.VERTICAL)
+      grid.getOrigin(Grid.OriginDirection.VERTICAL)
     );
   }
 
