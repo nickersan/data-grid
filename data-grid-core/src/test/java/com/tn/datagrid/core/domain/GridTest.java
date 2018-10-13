@@ -41,6 +41,25 @@ public class GridTest
   }
 
   @Test
+  public void testJoinRight()
+  {
+    Grid<String, String> grid1 = new Grid<>(List.of("A", "B", "C"), List.of("1", "2"));
+    Grid<String, String> grid2 = new Grid<>(List.of("D", "E", "F"), List.of("1", "2"));
+    Grid<String, String> grid3 = new Grid<>(List.of("G", "H", "I"), List.of("1", "2"));
+
+    assertEquals(
+      new Grid<>(List.of("G1", "A", "B", "C", "G2", "D", "E", "F", "G3", "G", "H", "I"), List.of("1", "2")),
+      grid1.as("G1").joinRight("G2", grid2).joinRight("G3", grid3).grid()
+    );
+  }
+
+  @Test
+  public void testJoinLeftMismatchedYAxis()
+  {
+
+  }
+
+  @Test
   public void testOriginHorizontal()
   {
     Grid<String, String> grid = new Grid<>(List.of("A", "B"), List.of("1", "2", "3"));

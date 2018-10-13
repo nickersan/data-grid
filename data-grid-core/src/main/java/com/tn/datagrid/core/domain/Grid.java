@@ -64,6 +64,11 @@ public class Grid<X, Y>
     return aggregateDirection.getOrigin(this);
   }
 
+  public <T> GridJoiner<T> as(T total)
+  {
+    return new GridJoiner<>(total);
+  }
+
   public enum AggregateDirection
   {
     HORIZONTAL
@@ -153,5 +158,26 @@ public class Grid<X, Y>
         .add("y", this.y)
         .toString();
     }
+
+  }
+
+  public class GridJoiner<T>
+  {
+    private T total;
+
+    private GridJoiner(T total)
+    {
+      this.total = total;
+    }
+
+    public <T1> GridJoinerHorizontal<T, T1> joinRight(T1 total, Grid<T, T> grid2)
+    {
+      return null;
+    }
+  }
+
+  public class GridJoinerHorizontal<T1, T2>
+  {
+
   }
 }
