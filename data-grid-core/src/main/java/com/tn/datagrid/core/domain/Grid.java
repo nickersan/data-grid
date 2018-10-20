@@ -1,6 +1,8 @@
 package com.tn.datagrid.core.domain;
 
+import static java.util.Collections.emptyMap;
 import static java.util.Collections.unmodifiableList;
+import static java.util.Collections.unmodifiableMap;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toMap;
 
@@ -8,21 +10,73 @@ import static com.google.common.base.MoreObjects.toStringHelper;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
+import java.util.function.Predicate;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 public class Grid<X, Y>
 {
+  private Map<String, X> aggregateColumns;
+  private Map<String, Y> aggregateRows;
   private List<X> xAxis;
   private List<Y> yAxis;
 
   public Grid(List<X> xAxis, List<Y> yAxis)
   {
+    this(emptyMap(), emptyMap(), xAxis, yAxis);
+  }
+
+  protected Grid(Map<String, X> aggregateColumns, Map<String, Y> aggregateRows, List<X> xAxis, List<Y> yAxis)
+  {
+    this.aggregateColumns = unmodifiableMap(aggregateColumns);
+    this.aggregateRows = unmodifiableMap(aggregateRows);
     this.xAxis = unmodifiableList(xAxis);
     this.yAxis = unmodifiableList(yAxis);
+  }
+
+  public boolean isAggregateColumn(X column)
+  {
+    return this.aggregateColumns.containsValue(column);
+  }
+
+  public boolean isNotAggregateColumn(X column)
+  {
+    return !this.isAggregateColumn(column);
+  }
+
+  public Optional<X> getAggregateColumn(String name)
+  {
+    return Optional.ofNullable(this.aggregateColumns.get(name));
+  }
+
+  public Map<String, X> getAggregateColumns()
+  {
+    return this.aggregateColumns;
+  }
+
+  public boolean isAggregateRow(Y row)
+  {
+    return this.aggregateRows.containsValue(row);
+  }
+
+  public boolean isNotAggregateRow(Y row)
+  {
+    return !this.isAggregateRow(row);
+  }
+
+  public Optional<Y> getAggregateRow(String name)
+  {
+    return Optional.ofNullable(this.aggregateRows.get(name));
+  }
+
+  public Map<String, Y> getAggregateRows()
+  {
+    return this.aggregateRows;
   }
 
   public List<Cell<X, Y>> getColumn(X x)
@@ -55,22 +109,40 @@ public class Grid<X, Y>
     return this.yAxis.stream().collect(toMap(identity(), this::getRow));
   }
 
-  public Grid<X, Y> aggregateColumns(Collector<? super X, ?, X> collector)
+  public Grid<X, Y> aggregateColumns(String name, Collector<? super X, ?, X> collector)
   {
-    List<X> xAxis = new ArrayList<>();
-    xAxis.add(this.xAxis.stream().collect(collector));
-    xAxis.addAll(this.xAxis);
-
-    return new Grid<>(xAxis, this.yAxis);
+    return this.aggregateColumns(name, (column) -> true, collector);
   }
 
-  public Grid<X, Y> aggregateRows(Collector<? super Y, ?, Y> collector)
+  public Grid<X, Y> aggregateColumns(String name, Predicate<X> filter, Collector<? super X, ?, X> collector)
   {
+    X aggregateColumn = this.xAxis.stream().filter(filter).collect(collector);
+    Map<String, X> aggregateColumns = new HashMap<>(this.aggregateColumns);
+    aggregateColumns.put(name, aggregateColumn);
+
+    List<X> xAxis = new ArrayList<>();
+    xAxis.add(aggregateColumn);
+    xAxis.addAll(this.xAxis);
+
+    return new Grid<>(aggregateColumns, this.aggregateRows, xAxis, this.yAxis);
+  }
+
+  public Grid<X, Y> aggregateRows(String name, Collector<? super Y, ?, Y> collector)
+  {
+    return this.aggregateRows(name, (row) -> true, collector);
+  }
+
+  public Grid<X, Y> aggregateRows(String name, Predicate<Y> filter, Collector<? super Y, ?, Y> collector)
+  {
+    Y aggregateRow = this.yAxis.stream().filter(filter).collect(collector);
+    Map<String, Y> aggregateRows = new HashMap<>(this.aggregateRows);
+    aggregateRows.put(name, aggregateRow);
+
     List<Y> yAxis = new ArrayList<>();
-    yAxis.add(this.yAxis.stream().collect(collector));
+    yAxis.add(aggregateRow);
     yAxis.addAll(this.yAxis);
 
-    return new Grid<>(this.xAxis, yAxis);
+    return new Grid<>(this.aggregateColumns, aggregateRows, this.xAxis, yAxis);
   }
 
   protected static <X, Y> Cell<X, Y> cell(X x, Y y)
@@ -84,6 +156,8 @@ public class Grid<X, Y>
     return this == other || (
       other != null &&
         this.getClass().equals(other.getClass()) &&
+        this.aggregateColumns.equals(((Grid)other).aggregateColumns) &&
+        this.aggregateRows.equals(((Grid)other).aggregateRows) &&
         this.xAxis.equals(((Grid)other).xAxis) &&
         this.yAxis.equals(((Grid)other).yAxis)
     );
@@ -99,6 +173,8 @@ public class Grid<X, Y>
   public String toString()
   {
     return toStringHelper(this)
+      .add("aggregateColumns", this.aggregateColumns)
+      .add("aggregateRows", this.aggregateRows)
       .add("xAxis", this.xAxis)
       .add("yAxis", this.yAxis)
       .toString();
@@ -173,6 +249,5 @@ public class Grid<X, Y>
         .add("y", this.y)
         .toString();
     }
-
   }
 }

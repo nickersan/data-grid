@@ -1,6 +1,10 @@
 package com.tn.datagrid.core.domain;
 
+import static java.util.Collections.emptyMap;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,28 +13,91 @@ import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
 
+@SuppressWarnings("OptionalGetWithoutIsPresent")
 public class GridTest
 {
   @Test
   public void testAggregateColumns()
   {
-    Grid<String, String> grid = new Grid<>(List.of("A", "B", "C"), List.of("1", "2"));
+    String aggregateColumnName = "Test";
 
-    assertEquals(
-      new Grid<>(List.of("ABC", "A", "B", "C"), List.of("1", "2")),
-      grid.aggregateColumns(Collectors.joining())
-    );
+    Grid<String, String> grid = new Grid<>(List.of("A", "B", "C"), List.of("1", "2"));
+    Grid<String, String> aggregateGrid = grid.aggregateColumns(aggregateColumnName, Collectors.joining());
+
+    assertEquals(new Grid<>(Map.of(aggregateColumnName, "ABC"), emptyMap(), List.of("ABC", "A", "B", "C"), List.of("1", "2")), aggregateGrid);
+    assertEquals("ABC", aggregateGrid.getAggregateColumn(aggregateColumnName).get());
+    assertEquals("ABC", aggregateGrid.getAggregateColumns().get(aggregateColumnName));
+
+    assertTrue(aggregateGrid.isAggregateColumn("ABC"));
+    assertFalse(aggregateGrid.isAggregateColumn("A"));
+    assertFalse(aggregateGrid.isAggregateColumn("B"));
+    assertFalse(aggregateGrid.isAggregateColumn("C"));
+
+    assertFalse(aggregateGrid.isNotAggregateColumn("ABC"));
+    assertTrue(aggregateGrid.isNotAggregateColumn("A"));
+    assertTrue(aggregateGrid.isNotAggregateColumn("B"));
+    assertTrue(aggregateGrid.isNotAggregateColumn("C"));
+  }
+
+  @Test
+  public void testAggregateColumnsWithFilter()
+  {
+    String aggregateColumnName = "Test";
+
+    Grid<String, String> grid = new Grid<>(List.of("A", "B", "C"), List.of("1", "2"));
+    Grid<String, String> aggregateGrid = grid.aggregateColumns(aggregateColumnName, "A"::equals, Collectors.joining());
+
+    assertEquals(new Grid<>(Map.of(aggregateColumnName, "A"), emptyMap(), List.of("A", "A", "B", "C"), List.of("1", "2")), aggregateGrid);
+    assertEquals("A", aggregateGrid.getAggregateColumn(aggregateColumnName).get());
+    assertEquals("A", aggregateGrid.getAggregateColumns().get(aggregateColumnName));
+
+    assertTrue(aggregateGrid.isAggregateColumn("A"));
+    assertFalse(aggregateGrid.isAggregateColumn("B"));
+    assertFalse(aggregateGrid.isAggregateColumn("C"));
+
+    assertFalse(aggregateGrid.isNotAggregateColumn("A"));
+    assertTrue(aggregateGrid.isNotAggregateColumn("B"));
+    assertTrue(aggregateGrid.isNotAggregateColumn("C"));
   }
 
   @Test
   public void testAggregateRows()
   {
-    Grid<String, String> grid = new Grid<>(List.of("A", "B", "C"), List.of("1", "2"));
+    String aggregateRowName = "Test";
 
-    assertEquals(
-      new Grid<>(List.of("A", "B", "C"), List.of("12", "1", "2")),
-      grid.aggregateRows(Collectors.joining())
-    );
+    Grid<String, String> grid = new Grid<>(List.of("A", "B", "C"), List.of("1", "2"));
+    Grid<String, String> aggregateGrid = grid.aggregateRows(aggregateRowName, Collectors.joining());
+
+    assertEquals(new Grid<>(emptyMap(), Map.of(aggregateRowName, "12"), List.of("A", "B", "C"), List.of("12", "1", "2")), aggregateGrid);
+    assertEquals("12", aggregateGrid.getAggregateRow(aggregateRowName).get());
+    assertEquals("12", aggregateGrid.getAggregateRows().get(aggregateRowName));
+
+    assertTrue(aggregateGrid.isAggregateRow("12"));
+    assertFalse(aggregateGrid.isAggregateRow("1"));
+    assertFalse(aggregateGrid.isAggregateRow("2"));
+
+    assertFalse(aggregateGrid.isNotAggregateRow("12"));
+    assertTrue(aggregateGrid.isNotAggregateRow("1"));
+    assertTrue(aggregateGrid.isNotAggregateRow("2"));
+  }
+
+  @Test
+  public void testAggregateRowsWithFilter()
+  {
+    String aggregateRowName = "Test";
+
+    Grid<String, String> grid = new Grid<>(List.of("A", "B", "C"), List.of("1", "2"));
+    Grid<String, String> aggregateGrid = grid.aggregateRows(aggregateRowName, "1"::equals, Collectors.joining());
+
+    assertEquals(new Grid<>(emptyMap(), Map.of(aggregateRowName, "1"), List.of("A", "B", "C"), List.of("1", "1", "2")), aggregateGrid);
+    assertEquals("1", aggregateGrid.getAggregateRow(aggregateRowName).get());
+    assertEquals("1", aggregateGrid.getAggregateRows().get(aggregateRowName));
+
+    assertTrue(aggregateGrid.isAggregateRow("1"));
+    assertFalse(aggregateGrid.isAggregateRow("2"));
+
+    assertFalse(aggregateGrid.isNotAggregateRow("1"));
+    assertTrue(aggregateGrid.isNotAggregateRow("2"));
   }
 
   @Test
