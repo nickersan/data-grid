@@ -133,15 +133,14 @@ public class GridTest
   @Test
   public void testJoinRight()
   {
-    Grid<String, String> grid1 = new Grid<>(List.of("A", "B", "C"), List.of("1", "2"));
-    Grid<String, String> grid2 = new Grid<>(List.of("D", "E", "F"), List.of("1", "2"));
+    Grid<String, String> grid1 = new Grid<>(List.of("A", "B", "C"), List.of("1", "2", "3"));
+    Grid<String, String> grid2 = new Grid<>(List.of("D", "E", "F"), List.of("1", "2", "4"));
     Grid<String, String> grid3 = new Grid<>(List.of("G", "H", "I"), List.of("1", "2"));
 
-
-//    assertEquals(
-//      new Grid<>(List.of("GT", "G1", "A", "B", "C", "G2", "D", "E", "F", "G3", "G", "H", "I"), List.of("1", "2")),
-//      grid1.joinRight("G1").add("G2", grid2).add("G3", grid3).grid("GT")
-//    );
+    assertEquals(
+      new Grid<>(List.of("A", "B", "C", "D", "E", "F", "G", "H", "I"), List.of("1", "2", "3", "4")),
+      grid1.joinRight("G1").add("G2", grid2).add("G3", grid3).grid("GT")
+    );
   }
 
   @Test
