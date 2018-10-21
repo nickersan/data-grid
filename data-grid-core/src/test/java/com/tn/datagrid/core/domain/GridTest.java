@@ -68,7 +68,16 @@ public class GridTest
     Grid<String, String> grid = new Grid<>(List.of("A", "B", "C"), List.of("1", "2"));
     Grid<String, String> aggregateGrid = grid.aggregateRows(aggregateRowName, Collectors.joining());
 
-    assertEquals(new Grid<>(emptyMap(), Map.of(aggregateRowName, "12"), List.of("A", "B", "C"), List.of("12", "1", "2")), aggregateGrid);
+    assertEquals(
+      new Grid<>(
+        emptyMap(),
+        Map.of(aggregateRowName, new Ag"12"),
+        List.of("A", "B", "C"),
+        List.of("12", "1", "2")
+      ),
+      aggregateGrid
+    )
+    ;
     assertEquals("12", aggregateGrid.getAggregateRow(aggregateRowName).get());
     assertEquals("12", aggregateGrid.getAggregateRows().get(aggregateRowName));
 
@@ -131,7 +140,7 @@ public class GridTest
   }
 
   @Test
-  public void testJoinRight()
+  public void testJoin()
   {
     Grid<String, String> grid1 = new Grid<>(List.of("A", "B", "C"), List.of("1", "2", "3"));
     Grid<String, String> grid2 = new Grid<>(List.of("D", "E", "F"), List.of("1", "2", "4"));
@@ -139,7 +148,7 @@ public class GridTest
 
     assertEquals(
       new Grid<>(List.of("A", "B", "C", "D", "E", "F", "G", "H", "I"), List.of("1", "2", "3", "4")),
-      grid1.joinRight("G1").add("G2", grid2).add("G3", grid3).grid("GT")
+      grid2.joinLeft(grid1)//.joinRight(grid3)
     );
   }
 

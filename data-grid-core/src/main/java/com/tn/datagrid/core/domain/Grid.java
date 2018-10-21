@@ -4,6 +4,7 @@ import static java.util.Collections.emptyMap;
 import static java.util.Collections.unmodifiableList;
 import static java.util.Collections.unmodifiableMap;
 import static java.util.function.Function.identity;
+import static java.util.stream.Collectors.*;
 import static java.util.stream.Collectors.toMap;
 
 import static com.google.common.base.MoreObjects.toStringHelper;
@@ -17,12 +18,11 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collector;
-import java.util.stream.Collectors;
 
 public class Grid<X, Y>
 {
-  private Map<String, X> aggregateColumns;
-  private Map<String, Y> aggregateRows;
+  private Map<String, AggregateCell<X>> aggregateColumns;
+  private Map<String, AggregateCell<Y>> aggregateRows;
   private List<X> xAxis;
   private List<Y> yAxis;
 
@@ -31,7 +31,7 @@ public class Grid<X, Y>
     this(emptyMap(), emptyMap(), xAxis, yAxis);
   }
 
-  protected Grid(Map<String, X> aggregateColumns, Map<String, Y> aggregateRows, List<X> xAxis, List<Y> yAxis)
+  protected Grid(Map<String, AggregateCell<X>> aggregateColumns, Map<String, AggregateCell<Y>> aggregateRows, List<X> xAxis, List<Y> yAxis)
   {
     this.aggregateColumns = unmodifiableMap(aggregateColumns);
     this.aggregateRows = unmodifiableMap(aggregateRows);
@@ -41,7 +41,7 @@ public class Grid<X, Y>
 
   public boolean isAggregateColumn(X column)
   {
-    return this.aggregateColumns.containsValue(column);
+    return this.aggregateColumns.values().stream().anyMatch((aggregateCell) -> aggregateCell.getValue().equals(column));
   }
 
   public boolean isNotAggregateColumn(X column)
@@ -51,17 +51,18 @@ public class Grid<X, Y>
 
   public Optional<X> getAggregateColumn(String name)
   {
-    return Optional.ofNullable(this.aggregateColumns.get(name));
+    AggregateCell<X> aggregateCell = this.aggregateColumns.get(name);
+    return aggregateCell != null ? Optional.ofNullable(aggregateCell.getValue()) : Optional.empty();
   }
 
   public Map<String, X> getAggregateColumns()
   {
-    return this.aggregateColumns;
+    return this.aggregateColumns.entrySet().stream().collect(toMap(Map.Entry::getKey, (entry) -> entry.getValue().getValue()));
   }
 
   public boolean isAggregateRow(Y row)
   {
-    return this.aggregateRows.containsValue(row);
+    return this.aggregateRows.values().stream().anyMatch((aggregateCell) -> aggregateCell.getValue().equals(row));
   }
 
   public boolean isNotAggregateRow(Y row)
@@ -71,17 +72,18 @@ public class Grid<X, Y>
 
   public Optional<Y> getAggregateRow(String name)
   {
-    return Optional.ofNullable(this.aggregateRows.get(name));
+    AggregateCell<Y> aggregateCell = this.aggregateRows.get(name);
+    return aggregateCell != null ? Optional.ofNullable(aggregateCell.getValue()) : Optional.empty();
   }
 
   public Map<String, Y> getAggregateRows()
   {
-    return this.aggregateRows;
+    return this.aggregateRows.entrySet().stream().collect(toMap(Map.Entry::getKey, (entry) -> entry.getValue().getValue()));
   }
 
   public List<Cell<X, Y>> getColumn(X x)
   {
-    return this.yAxis.stream().map((y) -> Grid.cell(x, y)).collect(Collectors.toList());
+    return this.yAxis.stream().map((y) -> Grid.cell(x, y)).collect(toList());
   }
 
   public Map<X, List<Cell<X, Y>>> getColumns()
@@ -101,7 +103,7 @@ public class Grid<X, Y>
 
   public List<Cell<X, Y>> getRow(Y y)
   {
-    return this.xAxis.stream().map((x) -> Grid.cell(x, y)).collect(Collectors.toList());
+    return this.xAxis.stream().map((x) -> Grid.cell(x, y)).collect(toList());
   }
 
   public Map<Y, List<Cell<X, Y>>> getRows()
@@ -116,12 +118,17 @@ public class Grid<X, Y>
 
   public Grid<X, Y> aggregateColumns(String name, Predicate<X> filter, Collector<? super X, ?, X> collector)
   {
-    X aggregateColumn = this.xAxis.stream().filter(filter).collect(collector);
-    Map<String, X> aggregateColumns = new HashMap<>(this.aggregateColumns);
+    AggregateCell<X> aggregateColumn = new AggregateCell<>(
+      filter,
+      collector,
+      this.xAxis.stream().filter(filter).collect(collector)
+    );
+
+    Map<String, AggregateCell<X>> aggregateColumns = new HashMap<>(this.aggregateColumns);
     aggregateColumns.put(name, aggregateColumn);
 
     List<X> xAxis = new ArrayList<>();
-    xAxis.add(aggregateColumn);
+    xAxis.add(aggregateColumn.getValue());
     xAxis.addAll(this.xAxis);
 
     return new Grid<>(aggregateColumns, this.aggregateRows, xAxis, this.yAxis);
@@ -134,20 +141,36 @@ public class Grid<X, Y>
 
   public Grid<X, Y> aggregateRows(String name, Predicate<Y> filter, Collector<? super Y, ?, Y> collector)
   {
-    Y aggregateRow = this.yAxis.stream().filter(filter).collect(collector);
-    Map<String, Y> aggregateRows = new HashMap<>(this.aggregateRows);
+    AggregateCell<Y> aggregateRow = new AggregateCell<>(
+      filter,
+      collector,
+      this.yAxis.stream().filter(filter).collect(collector)
+    );
+
+    Map<String, AggregateCell<Y>> aggregateRows = new HashMap<>(this.aggregateRows);
     aggregateRows.put(name, aggregateRow);
 
     List<Y> yAxis = new ArrayList<>();
-    yAxis.add(aggregateRow);
+    yAxis.add(aggregateRow.getValue());
     yAxis.addAll(this.yAxis);
 
     return new Grid<>(this.aggregateColumns, aggregateRows, this.xAxis, yAxis);
   }
 
-  protected static <X, Y> Cell<X, Y> cell(X x, Y y)
+  public Grid<X, Y> joinLeft(Grid<X, Y> grid)
   {
-    return new Cell<>(x, y);
+    Map<String, Y> aggregateRows = new HashMap<>();
+    aggregateRows.putAll();
+
+    List<X> xAxis = new ArrayList<>();
+    xAxis.addAll(grid.xAxis);
+    xAxis.addAll(this.xAxis);
+
+    List<Y> yAxis = new ArrayList<>();
+    yAxis.addAll(grid.yAxis);
+    yAxis.addAll(grid.yAxis.stream().filter((y) -> !yAxis.contains(y)).collect(toList()));
+
+    return new Grid<>(, , xAxis, yAxis);
   }
 
   @Override
@@ -180,27 +203,9 @@ public class Grid<X, Y>
       .toString();
   }
 
-  public enum OriginDirection
+  protected static <X, Y> Cell<X, Y> cell(X x, Y y)
   {
-    HORIZONTAL
-    {
-      @Override
-      public <X, Y> List<Cell<X, Y>> getOrigin(Grid<X, Y> grid)
-      {
-        return grid.getColumns().values().stream().flatMap(Collection::stream).collect(Collectors.toList());
-      }
-    },
-
-    VERTICAL
-    {
-      @Override
-      public <X, Y> List<Cell<X, Y>> getOrigin(Grid<X, Y> grid)
-      {
-        return grid.getRows().values().stream().flatMap(Collection::stream).collect(Collectors.toList());
-      }
-    };
-    public abstract <X, Y> List<Cell<X, Y>> getOrigin(Grid<X, Y> grid);
-
+    return new Cell<>(x, y);
   }
 
   public static class Cell<X, Y>
@@ -213,7 +218,6 @@ public class Grid<X, Y>
       this.x = x;
       this.y = y;
     }
-
     public Object getX()
     {
       return x;
@@ -249,5 +253,48 @@ public class Grid<X, Y>
         .add("y", this.y)
         .toString();
     }
+
+  }
+  public enum OriginDirection
+  {
+    HORIZONTAL
+      {
+        @Override
+        public <X, Y> List<Cell<X, Y>> getOrigin(Grid<X, Y> grid)
+        {
+          return grid.getColumns().values().stream().flatMap(Collection::stream).collect(toList());
+        }
+      },
+
+    VERTICAL
+      {
+        @Override
+        public <X, Y> List<Cell<X, Y>> getOrigin(Grid<X, Y> grid)
+        {
+          return grid.getRows().values().stream().flatMap(Collection::stream).collect(toList());
+        }
+      };
+
+    public abstract <X, Y> List<Cell<X, Y>> getOrigin(Grid<X, Y> grid);
+  }
+
+  protected static class AggregateCell<T>
+  {
+    private Collector<? super T, ?, T> collector;
+    private T value;
+    private Predicate<T> filter;
+
+    public AggregateCell(Predicate<T> filter, Collector<? super T, ?, T> collector, T value)
+    {
+      this.filter = filter;
+      this.collector = collector;
+      this.value = value;
+    }
+
+    public T getValue()
+    {
+      return this.value;
+    }
   }
 }
+
