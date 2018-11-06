@@ -13,7 +13,7 @@ import com.tn.datagrid.core.domain.Location;
 
 public class CompositeIdentity extends AbstractIdentity
 {
-  private List<Identity> referencingIdentities;
+  private Collection<Identity> referencingIdentities;
 
   public CompositeIdentity(Location location, Identity... referencingIdentities)
   {
@@ -23,7 +23,7 @@ public class CompositeIdentity extends AbstractIdentity
   public CompositeIdentity(Location location, Collection<Identity> referencingIdentities)
   {
     super(location);
-    this.referencingIdentities = compact(referencingIdentities).stream().sorted().collect(toList());
+    this.referencingIdentities = new HashSet<>(compact(referencingIdentities)); //.stream().sorted().collect(toList());
   }
 
   @Override
